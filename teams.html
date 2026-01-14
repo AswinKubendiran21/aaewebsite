@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Teams | AAE</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div data-include="header.html"></div>
+    <!-- Teams Hero -->
+    <section class="page-hero">
+        <div class="container">
+            <h1 class="page-title">Our Teams</h1>
+            <p class="page-subtitle">Meet the dedicated teams that make AAE successful</p>
+        </div>
+    </section>
+
+    <!-- Teams Filter -->
+    <section class="teams-section">
+        <div class="container">
+            <div class="teams-filter" id="teamsFilter">
+                <button class="filter-btn active" data-filter="all">All Teams</button>
+                <button class="filter-btn" data-filter="core">Core Committee</button>
+                <button class="filter-btn" data-filter="technical">Technical Teams</button>
+                <button class="filter-btn" data-filter="event">Event Teams</button>
+                <button class="filter-btn" data-filter="welfare">Student Welfare</button>
+                <button class="filter-btn" data-filter="renovation">Renovation Team</button>
+                <button class="filter-btn" data-filter="design">Design & Media</button>
+            </div>
+            
+            <!-- Teams Grid -->
+            <div class="teams-container" id="teamsContainer">
+                <!-- Teams will be loaded dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <div data-include="footer.html"></div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
