@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Event Registration</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0b1c2d;
+      color: #fff;
+    }
+    .container {
+      width: 400px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #13293d;
+      border-radius: 10px;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: none;
+    }
+    button {
+      background: #f4b400;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    a.pay {
+      display: block;
+      text-align: center;
+      background: #00c853;
+      color: white;
+      padding: 10px;
+      text-decoration: none;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h2>Event Registration</h2>
+
+    <form action="https://docs.google.com/forms/d/e/1FAIpQLSffH0-jtkdwXRAJEqI6GYwX6_Yjw3FyS_um65_QHsuJclfTHw
+/formResponse"
+    
+          method="POST"
+          target="_self">
+
+      <input name="entry.111111" placeholder="Full Name" required>
+      <input name="entry.222222" type="email" placeholder="Email" required>
+      <input name="entry.333333" placeholder="Phone Number" required>
+
+      <select id="event" name="entry.444444" required>
+        <option value="">Select Event</option>
+        <option value="Workshop">Workshop</option>
+        <option value="Hackathon">Hackathon</option>
+        <option value="Seminar">Seminar</option>
+      </select>
+
+      <p id="fee"></p>
+
+      <a id="payBtn" class="pay" target="_blank">Pay Now</a>
+
+      <input name="entry.555555" placeholder="Transaction ID" required>
+
+      <button type="submit">Confirm Registration</button>
+    </form>
+  </div>
+
+<script>
+  const fees = {
+    Workshop: 500,
+    Hackathon: 1000,
+    Seminar: 300
+  };
+
+  const links = {
+    Workshop: "https://rzp.io/l/workshop",
+    Hackathon: "https://rzp.io/l/hackathon",
+    Seminar: "https://rzp.io/l/seminar"
+  };
+
+  document.getElementById("event").addEventListener("change", function () {
+    document.getElementById("fee").innerText =
+      "Amount to Pay: ₹" + fees[this.value];
+
+    document.getElementById("payBtn").href = links[this.value];
+  });
+</script>
+</body>
+</html>

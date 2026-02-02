@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flight'26 - Admit Card Generator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a1f3d 0%, #1a3b6b 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #4fc3f7;
+            margin-bottom: 5px;
+            font-size: 28px;
+        }
+
+        .header .subtitle {
+            color: #bbdefb;
+            font-size: 14px;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #0d47a1;
+            font-size: 14px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #bbdefb;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        input:focus {
+            border-color: #4fc3f7;
+            outline: none;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: #0d47a1;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background: #1565c0;
+        }
+
+        .btn-pdf {
+            background: #d32f2f;
+        }
+
+        .btn-pdf:hover {
+            background: #f44336;
+        }
+
+        /* ID Card Style Admit Card */
+        .id-card {
+            background: linear-gradient(135deg, #0d47a1 0%, #1976d2 100%);
+            border-radius: 15px;
+            overflow: hidden;
+            width: 350px;
+            height: 500px;
+            margin: 0 auto;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            display: none;
+        }
+
+        .card-header {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            text-align: center;
+            border-bottom: 2px dashed rgba(255, 255, 255, 0.3);
+        }
+
+        .logo {
+            font-size: 24px;
+            color: #4fc3f7;
+            margin-bottom: 5px;
+        }
+
+        .card-header h2 {
+            color: white;
+            font-size: 20px;
+            margin-bottom: 3px;
+        }
+
+        .card-header p {
+            color: #bbdefb;
+            font-size: 12px;
+        }
+
+        .card-body {
+            padding: 20px;
+            background: white;
+            height: calc(100% - 120px);
+            position: relative;
+        }
+
+        .card-details {
+            margin-bottom: 15px;
+        }
+
+        .detail-row {
+            display: flex;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed #e3f2fd;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #0d47a1;
+            width: 120px;
+            font-size: 13px;
+        }
+
+        .detail-value {
+            color: #333;
+            flex: 1;
+            font-size: 13px;
+        }
+
+        .events-list {
+            background: #f5f9ff;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+
+        .event-item {
+            font-size: 12px;
+            color: #333;
+            margin-bottom: 5px;
+            padding-left: 10px;
+            border-left: 3px solid #4fc3f7;
+        }
+
+        .card-footer {
+            position: absolute;
+            bottom: 15px;
+            left: 20px;
+            right: 20px;
+            text-align: center;
+        }
+
+        .qr-code {
+            width: 80px;
+            height: 80px;
+            background: #f5f5f5;
+            margin: 0 auto 10px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 11px;
+        }
+
+        .footer-text {
+            color: #666;
+            font-size: 11px;
+            margin-top: 5px;
+        }
+
+        .event-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-top: 5px;
+        }
+
+        .event-option {
+            border: 2px solid #bbdefb;
+            border-radius: 6px;
+            padding: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            text-align: center;
+            transition: 0.3s;
+        }
+
+        .event-option.selected {
+            background: #e3f2fd;
+            border-color: #0d47a1;
+        }
+
+        .message {
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            text-align: center;
+            font-size: 13px;
+            display: none;
+        }
+
+        .success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>FLIGHT'26</h1>
+            <p class="subtitle">National Level Technical Symposium</p>
+            <p class="subtitle">Admit Card Generator</p>
+        </div>
+
+        <div class="form-card">
+            <div class="form-group">
+                <label>Full Name *</label>
+                <input type="text" id="fullName" placeholder="Enter your name">
+            </div>
+            
+            <div class="form-group">
+                <label>College *</label>
+                <input type="text" id="college" placeholder="Enter college name">
+            </div>
+            
+            <div class="form-group">
+                <label>Registration ID *</label>
+                <input type="text" id="regId" placeholder="FLT2024XXXX">
+            </div>
+            
+            <div class="form-group">
+                <label>Select Events *</label>
+                <div class="event-options" id="eventOptions">
+                    <!-- Events loaded by JS -->
+                </div>
+            </div>
+            
+            <button class="btn" id="generateBtn">
+                <i class="fas fa-id-card"></i> Generate Admit Card
+            </button>
+            
+            <button class="btn btn-pdf" id="downloadBtn" style="display: none;">
+                <i class="fas fa-file-pdf"></i> Download as PDF
+            </button>
+            
+            <div id="message" class="message"></div>
+        </div>
+
+        <!-- ID Card -->
+        <div class="id-card" id="idCard">
+            <div class="card-header">
+                <div class="logo">✈️</div>
+                <h2>FLIGHT'26</h2>
+                <p>NATIONAL LEVEL TECHNICAL SYMPOSIUM</p>
+                <p>21-22 March 2026</p>
+            </div>
+            
+            <div class="card-body">
+                <div class="card-details">
+                    <div class="detail-row">
+                        <div class="detail-label">Registration ID:</div>
+                        <div class="detail-value" id="cardRegId">FLT20240001</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Name:</div>
+                        <div class="detail-value" id="cardName">-</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">College:</div>
+                        <div class="detail-value" id="cardCollege">-</div>
+                    </div>
+                </div>
+                
+                <div style="margin: 10px 0;">
+                    <div style="font-weight: 600; color: #0d47a1; font-size: 13px; margin-bottom: 5px;">
+                        <i class="fas fa-calendar-alt"></i> Registered Events:
+                    </div>
+                    <div class="events-list" id="cardEvents">
+                        <!-- Events will appear here -->
+                    </div>
+                </div>
+                
+                <div class="card-footer">
+                    <div class="qr-code" id="qrCode">
+                        QR Code
+                    </div>
+                    <div class="footer-text">
+                        Valid ID for Symposium Entry
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { jsPDF } = window.jspdf;
+        
+        // Events data
+        const events = [
+            { id: 1, name: "Composite Workshop", code: "CW" },
+            { id: 2, name: "Flight Racing", code: "FR" },
+            { id: 3, name: "Drone Racing", code: "DR" },
+            { id: 4, name: "Jet Workshop", code: "JW" },
+            { id: 5, name: "Paper Presentation", code: "PP" }
+        ];
+
+        // DOM Elements
+        const eventOptions = document.getElementById('eventOptions');
+        const generateBtn = document.getElementById('generateBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const idCard = document.getElementById('idCard');
+        const message = document.getElementById('message');
+        
+        // Card elements
+        const cardRegId = document.getElementById('cardRegId');
+        const cardName = document.getElementById('cardName');
+        const cardCollege = document.getElementById('cardCollege');
+        const cardEvents = document.getElementById('cardEvents');
+        const qrCode = document.getElementById('qrCode');
+
+        let selectedEvents = [];
+
+        // Initialize
+        function init() {
+            // Load events
+            events.forEach(event => {
+                const option = document.createElement('div');
+                option.className = 'event-option';
+                option.textContent = event.name;
+                option.addEventListener('click', () => {
+                    option.classList.toggle('selected');
+                    if (option.classList.contains('selected')) {
+                        selectedEvents.push(event.id);
+                    } else {
+                        selectedEvents = selectedEvents.filter(id => id !== event.id);
+                    }
+                });
+                eventOptions.appendChild(option);
+            });
+
+            // Set sample data
+            document.getElementById('fullName').value = 'Rahul Sharma';
+            document.getElementById('college').value = 'IIT Delhi';
+            document.getElementById('regId').value = 'FLT2024' + Math.floor(Math.random() * 1000);
+
+            // Auto-select first event
+            setTimeout(() => {
+                eventOptions.children[0].click();
+            }, 100);
+
+            // Event listeners
+            generateBtn.addEventListener('click', generateCard);
+            downloadBtn.addEventListener('click', downloadPDF);
+        }
+
+        // Generate ID Card
+        function generateCard() {
+            const name = document.getElementById('fullName').value.trim();
+            const college = document.getElementById('college').value.trim();
+            const regId = document.getElementById('regId').value.trim();
+
+            if (!name || !college || !regId) {
+                showMessage('Please fill all required fields', 'error');
+                return;
+            }
+
+            if (selectedEvents.length === 0) {
+                showMessage('Please select at least one event', 'error');
+                return;
+            }
+
+            // Update card
+            cardRegId.textContent = regId;
+            cardName.textContent = name;
+            cardCollege.textContent = college;
+
+            // Update events
+            cardEvents.innerHTML = '';
+            selectedEvents.forEach(eventId => {
+                const event = events.find(e => e.id === eventId);
+                const eventDiv = document.createElement('div');
+                eventDiv.className = 'event-item';
+                eventDiv.textContent = event.name + ' (' + event.code + ')';
+                cardEvents.appendChild(eventDiv);
+            });
+
+            // Update QR code
+            const qrData = `FLIGHT26:${regId}:${name}:${selectedEvents.map(id => events.find(e => e.id === id).code).join(',')}`;
+            qrCode.innerHTML = `<div style="font-size: 9px; text-align: center;">${qrData}</div>`;
+
+            // Show card
+            idCard.style.display = 'block';
+            downloadBtn.style.display = 'block';
+            showMessage('Admit card generated successfully!', 'success');
+
+            // Scroll to card
+            setTimeout(() => {
+                idCard.scrollIntoView({ behavior: 'smooth' });
+            }, 300);
+        }
+
+        // Download as PDF
+        function downloadPDF() {
+            const pdf = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: [86, 54] // ID Card size
+            });
+
+            // Add background
+            pdf.setFillColor(13, 71, 161);
+            pdf.rect(0, 0, 86, 15, 'F');
+            
+            // Header
+            pdf.setTextColor(255, 255, 255);
+            pdf.setFontSize(16);
+            pdf.text('FLIGHT\'26', 43, 8, { align: 'center' });
+            pdf.setFontSize(8);
+            pdf.text('NATIONAL TECHNICAL SYMPOSIUM', 43, 12, { align: 'center' });
+
+            // White body
+            pdf.setFillColor(255, 255, 255);
+            pdf.rect(3, 16, 80, 35, 'F');
+
+            // Details
+            pdf.setTextColor(0, 0, 0);
+            pdf.setFontSize(10);
+            pdf.text('ID: ' + cardRegId.textContent, 5, 20);
+            pdf.text('Name: ' + cardName.textContent, 5, 25);
+            pdf.text('College: ' + cardCollege.textContent, 5, 30);
+
+            // Events
+            pdf.setFontSize(8);
+            pdf.text('Events:', 5, 35);
+            let yPos = 40;
+            selectedEvents.forEach(eventId => {
+                const event = events.find(e => e.id === eventId);
+                pdf.text('• ' + event.code, 8, yPos);
+                yPos += 4;
+            });
+
+            // Footer
+            pdf.setFontSize(6);
+            pdf.text('Venue: AAE Campus | 21-22 Mar 2026', 43, 53, { align: 'center' });
+
+            // Save
+            pdf.save('Flight26_AdmitCard_' + cardRegId.textContent + '.pdf');
+            showMessage('PDF downloaded successfully!', 'success');
+        }
+
+        // Show message
+        function showMessage(text, type) {
+            message.textContent = text;
+            message.className = 'message ' + type;
+            message.style.display = 'block';
+            setTimeout(() => {
+                message.style.display = 'none';
+            }, 3000);
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

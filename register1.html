@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Registration</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #2a3b8f);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(90deg, #0f3460, #1a2a6c);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-bottom: 5px solid #ff9a3c;
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .progress-bar {
+            display: flex;
+            justify-content: space-between;
+            background-color: #f0f0f0;
+            padding: 15px 30px;
+            position: relative;
+        }
+        
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #666;
+            margin-bottom: 8px;
+            border: 3px solid #ddd;
+            transition: all 0.3s;
+        }
+        
+        .progress-step.active .step-circle {
+            background-color: #ff9a3c;
+            border-color: #ff9a3c;
+            color: white;
+        }
+        
+        .step-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #777;
+        }
+        
+        .progress-step.active .step-label {
+            color: #ff9a3c;
+        }
+        
+        .progress-line {
+            position: absolute;
+            top: 37px;
+            left: 10%;
+            width: 80%;
+            height: 4px;
+            background-color: #ddd;
+            z-index: 1;
+        }
+        
+        .progress-line-fill {
+            height: 100%;
+            background-color: #2ecc71;
+            width: 0%;
+            transition: width 0.5s;
+        }
+        
+        .form-container {
+            padding: 30px;
+        }
+        
+        .form-section {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        
+        .form-section.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        h2 {
+            color: #0f3460;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .event-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .event-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-color: #ff9a3c;
+        }
+        
+        .event-card.selected {
+            border-color: #ff9a3c;
+            background-color: rgba(255, 154, 60, 0.05);
+        }
+        
+        .event-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin: 10px 0;
+            color: #0f3460;
+        }
+        
+        .event-price {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #2ecc71;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #444;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        
+        input:focus, select:focus {
+            border-color: #ff9a3c;
+            outline: none;
+        }
+        
+        .amount-display {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 20px 0;
+            border-left: 5px solid #ff9a3c;
+        }
+        
+        .amount-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #2ecc71;
+        }
+        
+        .qr-container {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border: 1px solid #e0e0e0;
+        }
+        
+        .qr-image {
+            max-width: 200px;
+            border-radius: 8px;
+            margin: 10px auto;
+            display: block;
+        }
+        
+        .upi-details {
+            background-color: #0f3460;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-family: monospace;
+        }
+        
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-prev {
+            background-color: #f0f0f0;
+            color: #666;
+        }
+        
+        .btn-next, .btn-submit {
+            background-color: #ff9a3c;
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #ff9a3c;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error-message {
+            background-color: #ffe6e6;
+            color: #d63031;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            display: none;
+        }
+        
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .events-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                margin: 10px;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Event Registration</h1>
+            <p>Complete your registration in 4 simple steps</p>
+        </header>
+        
+        <div class="progress-bar">
+            <div class="progress-step active" id="step1">
+                <div class="step-circle">1</div>
+                <div class="step-label">Select Event</div>
+            </div>
+            <div class="progress-step" id="step2">
+                <div class="step-circle">2</div>
+                <div class="step-label">Details</div>
+            </div>
+            <div class="progress-step" id="step3">
+                <div class="step-circle">3</div>
+                <div class="step-label">Payment</div>
+            </div>
+            <div class="progress-step" id="step4">
+                <div class="step-circle">4</div>
+                <div class="step-label">Complete</div>
+            </div>
+            <div class="progress-line">
+                <div class="progress-line-fill" id="progressFill"></div>
+            </div>
+        </div>
+        
+        <div class="form-container">
+            <!-- Step 1: Select Events -->
+            <div class="form-section active" id="section1">
+                <h2>Select Events</h2>
+                <p>Choose one or more events. Total will update automatically.</p>
+                
+                <div class="events-grid" id="eventsContainer">
+                    <!-- Events will be loaded here -->
+                </div>
+                
+                <div class="amount-display">
+                    <div>Total Amount to Pay:</div>
+                    <div class="amount-value" id="totalAmount">₹0</div>
+                </div>
+                
+                <div class="button-group">
+                    <div></div>
+                    <button class="btn btn-next" id="nextStep1">Next →</button>
+                </div>
+            </div>
+            
+            <!-- Step 2: Personal Details -->
+            <div class="form-section" id="section2">
+                <h2>Personal Details</h2>
+                
+                <div class="form-group">
+                    <label for="fullName">Full Name *</label>
+                    <input type="text" id="fullName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Phone Number *</label>
+                    <input type="tel" id="phone" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="college">College Name *</label>
+                    <input type="text" id="college" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="course">Course/Department *</label>
+                    <input type="text" id="course" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="year">Year of Study *</label>
+                    <select id="year" required>
+                        <option value="">Select Year</option>
+                        <option>1st Year</option>
+                        <option>2nd Year</option>
+                        <option>3rd Year</option>
+                        <option>4th Year</option>
+                    </select>
+                </div>
+                
+                <div class="button-group">
+                    <button class="btn btn-prev" id="prevStep2">← Previous</button>
+                    <button class="btn btn-next" id="nextStep2">Next →</button>
+                </div>
+            </div>
+            
+            <!-- Step 3: Payment -->
+            <div class="form-section" id="section3">
+                <h2>Payment Details</h2>
+                
+                <div class="amount-display">
+                    <div>Amount to Pay:</div>
+                    <div class="amount-value" id="paymentAmount">₹0</div>
+                </div>
+                
+                <div class="qr-container">
+                    <p><strong>Scan QR Code to Pay</strong></p>
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=aswinkubendiran2005-1@okicici&pn=Aswin%20K&am=500&cu=INR" 
+                         alt="QR Code" class="qr-image" id="qrCode">
+                    <div class="upi-details">
+                        UPI ID: aswinkubendiran2005-1@okicici
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="transactionId">Transaction ID *</label>
+                    <input type="text" id="transactionId" required placeholder="Enter UPI Transaction ID">
+                </div>
+                
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Processing your registration...</p>
+                </div>
+                
+                <div class="error-message" id="errorMessage"></div>
+                <div class="success-message" id="successMessage"></div>
+                
+                <div class="button-group">
+                    <button class="btn btn-prev" id="prevStep3">← Previous</button>
+                    <button class="btn btn-submit" id="submitBtn">Submit Registration</button>
+                </div>
+            </div>
+            
+            <!-- Step 4: Success -->
+            <div class="form-section" id="section4">
+                <div style="text-align: center; padding: 40px 20px;">
+                    <div style="font-size: 4rem; color: #2ecc71; margin-bottom: 20px;">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h2 style="color: #2ecc71;">Registration Successful!</h2>
+                    
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 30px 0; text-align: left;">
+                        <h3 style="color: #0f3460; margin-bottom: 15px;">Registration Details:</h3>
+                        <p><strong>Registration ID:</strong> <span id="regIdDisplay"></span></p>
+                        <p><strong>Name:</strong> <span id="nameDisplay"></span></p>
+                        <p><strong>College:</strong> <span id="collegeDisplay"></span></p>
+                        <p><strong>Events:</strong> <span id="eventsDisplay"></span></p>
+                        <p><strong>Amount Paid:</strong> <span id="amountDisplay"></span></p>
+                    </div>
+                    
+                    <p><strong>✅ Confirmation email has been sent to your inbox.</strong></p>
+                    <p><strong>📧 Admit Card:</strong> Will be sent after payment verification (within 24 hours).</p>
+                    
+                    <button class="btn" onclick="location.reload()" 
+                            style="background: #0f3460; margin-top: 30px;">
+                        Register Another Person
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== CONFIGURATION ==========
+        // REPLACE THIS WITH YOUR GOOGLE APPS SCRIPT URL
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxKOW_IKGlYeB8_NHewKvWMC8Gv5B8vh_fEfBAq6not7T6bXUVw3WT29foQCKMClLJd/exec';
+        
+        // ========== EVENT DATA ==========
+        const events = [
+            { id: 'composite', name: 'Composite Workshop', price: 500, icon: 'fas fa-cogs' },
+            { id: 'flight', name: 'Flight Racing', price: 700, icon: 'fas fa-plane' },
+            { id: 'drone', name: 'Drone Racing', price: 800, icon: 'fas fa-drone' },
+            { id: 'jet', name: 'Jet Workshop', price: 600, icon: 'fas fa-rocket' },
+            { id: 'paper', name: 'Paper Presentation', price: 400, icon: 'fas fa-file-alt' }
+        ];
+        
+        // ========== STATE VARIABLES ==========
+        let selectedEvents = [];
+        let totalAmount = 0;
+        let currentStep = 1;
+        const totalSteps = 4;
+        
+        // ========== INITIALIZATION ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            initEvents();
+            initNavigation();
+            updateProgressBar();
+        });
+        
+        // ========== EVENT SELECTION ==========
+        function initEvents() {
+            const container = document.getElementById('eventsContainer');
+            
+            events.forEach(event => {
+                const card = document.createElement('div');
+                card.className = 'event-card';
+                card.innerHTML = `
+                    <div class="event-icon"><i class="${event.icon}"></i></div>
+                    <div class="event-name">${event.name}</div>
+                    <div class="event-price">₹${event.price}</div>
+                `;
+                
+                card.addEventListener('click', () => toggleEvent(event));
+                container.appendChild(card);
+            });
+        }
+        
+        function toggleEvent(event) {
+            const index = selectedEvents.findIndex(e => e.id === event.id);
+            const cards = document.querySelectorAll('.event-card');
+            
+            if (index === -1) {
+                // Add event
+                selectedEvents.push(event);
+                cards.forEach((card, i) => {
+                    if (events[i].id === event.id) {
+                        card.classList.add('selected');
+                    }
+                });
+            } else {
+                // Remove event
+                selectedEvents.splice(index, 1);
+                cards.forEach((card, i) => {
+                    if (events[i].id === event.id) {
+                        card.classList.remove('selected');
+                    }
+                });
+            }
+            
+            // Update total
+            totalAmount = selectedEvents.reduce((sum, e) => sum + e.price, 0);
+            document.getElementById('totalAmount').textContent = `₹${totalAmount}`;
+            document.getElementById('paymentAmount').textContent = `₹${totalAmount}`;
+            
+            // Update QR code with amount
+            if (totalAmount > 0) {
+                document.getElementById('qrCode').src = 
+                    `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=aswinkubendiran2005-1@okicici&pn=Aswin%20K&am=${totalAmount}&cu=INR`;
+            }
+        }
+        
+        // ========== FORM NAVIGATION ==========
+        function initNavigation() {
+            // Step 1 → 2
+            document.getElementById('nextStep1').addEventListener('click', () => {
+                if (selectedEvents.length === 0) {
+                    showError('Please select at least one event');
+                    return;
+                }
+                navigateToStep(2);
+            });
+            
+            // Step 2 → 3
+            document.getElementById('nextStep2').addEventListener('click', () => {
+                if (!validateStep2()) return;
+                navigateToStep(3);
+            });
+            
+            // Step 2 ← 1
+            document.getElementById('prevStep2').addEventListener('click', () => navigateToStep(1));
+            
+            // Step 3 ← 2
+            document.getElementById('prevStep3').addEventListener('click', () => navigateToStep(2));
+            
+            // Submit
+            document.getElementById('submitBtn').addEventListener('click', submitRegistration);
+        }
+        
+        function validateStep2() {
+            const required = ['fullName', 'email', 'phone', 'college', 'course', 'year'];
+            for (const field of required) {
+                const value = document.getElementById(field).value.trim();
+                if (!value) {
+                    showError(`Please fill in ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}`);
+                    document.getElementById(field).focus();
+                    return false;
+                }
+            }
+            
+            // Email validation
+            const email = document.getElementById('email').value.trim();
+            if (!isValidEmail(email)) {
+                showError('Please enter a valid email address');
+                return false;
+            }
+            
+            // Phone validation
+            const phone = document.getElementById('phone').value.trim();
+            if (!/^\d{10}$/.test(phone)) {
+                showError('Please enter a valid 10-digit phone number');
+                return false;
+            }
+            
+            hideError();
+            return true;
+        }
+        
+        // ========== REGISTRATION SUBMISSION ==========
+        async function submitRegistration() {
+            const transactionId = document.getElementById('transactionId').value.trim();
+            if (!transactionId) {
+                showError('Please enter your transaction ID');
+                return;
+            }
+            
+            // Prepare data
+            const data = {
+                fullName: document.getElementById('fullName').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                college: document.getElementById('college').value.trim(),
+                course: document.getElementById('course').value.trim(),
+                year: document.getElementById('year').value,
+                events: selectedEvents.map(e => e.name).join(', '),
+                eventIds: selectedEvents.map(e => e.id).join(', '),
+                totalAmount: totalAmount,
+                transactionId: transactionId,
+                timestamp: new Date().toISOString()
+            };
+            
+            // Show loading
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('submitBtn').disabled = true;
+            hideError();
+            
+            try {
+                const response = await sendToGoogleScript(data);
+                
+                if (response.success) {
+                    // Show success
+                    showSuccess('Registration successful! Check your email for confirmation.');
+                    
+                    // Update success display
+                    document.getElementById('regIdDisplay').textContent = response.registrationId || 'Pending';
+                    document.getElementById('nameDisplay').textContent = data.fullName;
+                    document.getElementById('collegeDisplay').textContent = data.college;
+                    document.getElementById('eventsDisplay').textContent = data.events;
+                    document.getElementById('amountDisplay').textContent = `₹${totalAmount}`;
+                    
+                    // Move to success step after delay
+                    setTimeout(() => navigateToStep(4), 2000);
+                } else {
+                    showError(response.message || 'Registration failed. Please try again.');
+                }
+            } catch (error) {
+                showError('Network error. Please check your connection.');
+                console.error('Error:', error);
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('submitBtn').disabled = false;
+            }
+        }
+        
+        async function sendToGoogleScript(data) {
+            // If no script URL configured, simulate success
+            if (GOOGLE_SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
+                return {
+                    success: true,
+                    registrationId: 'DEMO-' + Date.now().toString().slice(-6),
+                    message: 'Demo mode - Configure Google Script URL'
+                };
+            }
+            
+            try {
+                const formData = new FormData();
+                for (const key in data) {
+                    formData.append(key, data[key]);
+                }
+                
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                return await response.json();
+            } catch (error) {
+                // Fallback: Try JSON POST
+                try {
+                    const response = await fetch(GOOGLE_SCRIPT_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                    return await response.json();
+                } catch (e) {
+                    throw e;
+                }
+            }
+        }
+        
+        // ========== HELPER FUNCTIONS ==========
+        function navigateToStep(step) {
+            // Hide all sections
+            for (let i = 1; i <= totalSteps; i++) {
+                document.getElementById(`section${i}`).classList.remove('active');
+                document.getElementById(`step${i}`).classList.remove('active');
+            }
+            
+            // Show current section
+            document.getElementById(`section${step}`).classList.add('active');
+            document.getElementById(`step${step}`).classList.add('active');
+            
+            // Update progress bar
+            const progress = ((step - 1) / (totalSteps - 1)) * 100;
+            document.getElementById('progressFill').style.width = `${progress}%`;
+            
+            currentStep = step;
+            hideError();
+        }
+        
+        function updateProgressBar() {
+            const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
+            document.getElementById('progressFill').style.width = `${progress}%`;
+        }
+        
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+        
+        function showError(message) {
+            const el = document.getElementById('errorMessage');
+            el.textContent = message;
+            el.style.display = 'block';
+            
+            // Scroll to error
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        
+        function showSuccess(message) {
+            const el = document.getElementById('successMessage');
+            el.textContent = message;
+            el.style.display = 'block';
+        }
+        
+        function hideError() {
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

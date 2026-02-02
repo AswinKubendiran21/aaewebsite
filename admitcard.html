@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admit Card Generator - PDF Export</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Include jsPDF and html2canvas libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            font-size: 3rem;
+            color: #4a6fa5;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            color: #166088;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-section, .preview-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            color: #166088;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #4a6fa5;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #4a6fa5;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(74, 111, 165, 0.2);
+        }
+
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .event-checkbox {
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .event-checkbox:hover {
+            border-color: #4a6fa5;
+            background-color: rgba(74, 111, 165, 0.05);
+        }
+
+        .event-checkbox.selected {
+            border-color: #4a6fa5;
+            background-color: rgba(74, 111, 165, 0.1);
+        }
+
+        .event-checkbox input {
+            display: none;
+        }
+
+        .event-name {
+            font-weight: 600;
+            color: #166088;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .event-price {
+            color: #ff6b6b;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .event-time {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: #4a6fa5;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #166088;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        /* Admit Card Preview */
+        #admitCardPreview {
+            background: linear-gradient(135deg, #4a6fa5 0%, #166088 100%);
+            color: white;
+            border-radius: 12px;
+            overflow: hidden;
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .admit-header {
+            background: rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 2px dashed rgba(255, 255, 255, 0.2);
+        }
+
+        .admit-body {
+            background: white;
+            color: #333;
+            padding: 25px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .admit-row {
+            display: flex;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px dashed #eee;
+        }
+
+        .admit-label {
+            font-weight: 600;
+            color: #166088;
+            min-width: 140px;
+            font-size: 14px;
+        }
+
+        .admit-value {
+            color: #333;
+            flex: 1;
+            font-size: 14px;
+        }
+
+        .events-list {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            flex: 1;
+        }
+
+        .event-item {
+            background: white;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            border-left: 4px solid #4a6fa5;
+            font-size: 13px;
+        }
+
+        .event-title {
+            font-weight: 600;
+            color: #166088;
+            margin-bottom: 3px;
+        }
+
+        .event-details {
+            color: #666;
+            font-size: 12px;
+        }
+
+        .admit-footer {
+            background: rgba(0, 0, 0, 0.05);
+            padding: 15px;
+            text-align: center;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .qr-container {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .qr-placeholder {
+            width: 120px;
+            height: 120px;
+            background: #ddd;
+            margin: 0 auto;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 12px;
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+            display: none;
+        }
+
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            display: none;
+        }
+
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #4a6fa5;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .required {
+            color: #ff6b6b;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #admitCardForPDF, #admitCardForPDF * {
+                visibility: visible;
+            }
+            #admitCardForPDF {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <i class="fas fa-id-card"></i>
+            </div>
+            <h1>Admit Card Generator</h1>
+            <p class="subtitle">Generate and download admit cards as PDF</p>
+        </div>
+
+        <div class="content">
+            <!-- Form Section -->
+            <div class="form-section">
+                <h2 class="section-title"><i class="fas fa-edit"></i> Enter Details</h2>
+                
+                <div class="form-group">
+                    <div class="form-row">
+                        <div>
+                            <label for="fullName">Full Name <span class="required">*</span></label>
+                            <input type="text" id="fullName" placeholder="Enter full name" required>
+                        </div>
+                        <div>
+                            <label for="collegeName">College Name <span class="required">*</span></label>
+                            <input type="text" id="collegeName" placeholder="Enter college name" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="form-row">
+                        <div>
+                            <label for="email">Email <span class="required">*</span></label>
+                            <input type="email" id="email" placeholder="Enter email" required>
+                        </div>
+                        <div>
+                            <label for="phone">Phone <span class="required">*</span></label>
+                            <input type="tel" id="phone" placeholder="Enter 10-digit phone" maxlength="10" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="form-row">
+                        <div>
+                            <label for="registrationId">Registration ID <span class="required">*</span></label>
+                            <input type="text" id="registrationId" placeholder="Enter registration ID" required>
+                        </div>
+                        <div>
+                            <label for="transactionId">Transaction ID</label>
+                            <input type="text" id="transactionId" placeholder="Enter transaction ID">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Select Events <span class="required">*</span></label>
+                    <div class="events-grid" id="eventsGrid">
+                        <!-- Events will be loaded here -->
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="instructions">Special Instructions</label>
+                    <textarea id="instructions" rows="3" placeholder="Any special instructions or notes..."></textarea>
+                </div>
+
+                <div id="errorMessage" class="message error">
+                    <i class="fas fa-exclamation-circle"></i> <span id="errorText"></span>
+                </div>
+
+                <div class="loading" id="loadingIndicator">
+                    <div class="loader"></div>
+                    <p>Generating PDF...</p>
+                </div>
+
+                <div class="buttons">
+                    <button class="btn btn-primary" id="previewBtn">
+                        <i class="fas fa-eye"></i> Preview Admit Card
+                    </button>
+                    <button class="btn btn-success" id="generateBtn">
+                        <i class="fas fa-file-pdf"></i> Generate PDF
+                    </button>
+                </div>
+            </div>
+
+            <!-- Preview Section -->
+            <div class="preview-section">
+                <h2 class="section-title"><i class="fas fa-file-pdf"></i> PDF Preview</h2>
+                
+                <div id="admitCardPreview">
+                    <div class="admit-header">
+                        <h2 style="margin-bottom: 5px;">TECH FEST 2024</h2>
+                        <p style="opacity: 0.9;">OFFICIAL ADMIT CARD</p>
+                    </div>
+
+                    <div class="admit-body">
+                        <div class="admit-row">
+                            <div class="admit-label">Registration ID:</div>
+                            <div class="admit-value" id="previewRegId">TECH2024001</div>
+                        </div>
+                        <div class="admit-row">
+                            <div class="admit-label">Name:</div>
+                            <div class="admit-value" id="previewName">John Doe</div>
+                        </div>
+                        <div class="admit-row">
+                            <div class="admit-label">College:</div>
+                            <div class="admit-value" id="previewCollege">XYZ University</div>
+                        </div>
+                        <div class="admit-label">Email:</div>
+                            <div class="admit-value" id="previewEmail">john@example.com</div>
+                        </div>
+                        <div class="admit-row">
+                            <div class="admit-label">Phone:</div>
+                            <div class="admit-value" id="previewPhone">9876543210</div>
+                        </div>
+                        <div class="admit-row">
+                            <div class="admit-label">Transaction ID:</div>
+                            <div class="admit-value" id="previewTransaction">TXN123456789</div>
+                        </div>
+
+                        <div class="events-list" id="previewEvents">
+                            <div style="color: #166088; font-weight: 600; margin-bottom: 10px;">
+                                <i class="fas fa-calendar-alt"></i> REGISTERED EVENTS
+                            </div>
+                            <!-- Events will be loaded here -->
+                        </div>
+
+                        <div class="qr-container">
+                            <div class="qr-placeholder" id="previewQR">
+                                <span>QR Code</span>
+                            </div>
+                            <p style="color: #666; font-size: 12px; margin-top: 8px;">
+                                Scan at event entrance
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="admit-footer">
+                        <p><i class="fas fa-map-marker-alt"></i> Central University Campus | <i class="fas fa-calendar"></i> 15-17 Nov 2024</p>
+                        <p><i class="fas fa-phone"></i> Contact: 9876543210 | Email: techfest2024@email.com</p>
+                    </div>
+                </div>
+
+                <div class="buttons" style="margin-top: 20px;">
+                    <button class="btn btn-success" id="downloadBtn" style="display: none;">
+                        <i class="fas fa-download"></i> Download PDF
+                    </button>
+                    <button class="btn btn-danger" id="resetBtn">
+                        <i class="fas fa-redo"></i> Reset Form
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hidden div for PDF generation -->
+        <div id="admitCardForPDF" style="display: none; width: 794px; height: 1123px; background: white; padding: 40px; font-family: Arial, sans-serif;">
+            <!-- PDF content will be generated here -->
+        </div>
+    </div>
+
+    <script>
+        // Global jsPDF instance
+        const { jsPDF } = window.jspdf;
+
+        // Event data
+        const events = [
+            {
+                id: 1,
+                name: "Composite Workshop",
+                description: "Advanced composite materials workshop",
+                date: "15 Nov 2024",
+                time: "10:00 AM - 1:00 PM",
+                venue: "Workshop Hall A",
+                instructor: "Dr. Robert Chen",
+                fee: 500
+            },
+            {
+                id: 2,
+                name: "Flight Racing",
+                description: "RC Aircraft Racing Competition",
+                date: "16 Nov 2024",
+                time: "9:00 AM - 5:00 PM",
+                venue: "Main Ground",
+                instructor: "Capt. Sarah Johnson",
+                fee: 300
+            },
+            {
+                id: 3,
+                name: "Drone Racing",
+                description: "FPV Drone Racing Challenge",
+                date: "16 Nov 2024",
+                time: "2:00 PM - 6:00 PM",
+                venue: "Indoor Arena",
+                instructor: "Mike Rodriguez",
+                fee: 400
+            },
+            {
+                id: 4,
+                name: "Jet Workshop",
+                description: "Jet Engine Principles Workshop",
+                date: "17 Nov 2024",
+                time: "11:00 AM - 3:00 PM",
+                venue: "Engineering Lab",
+                instructor: "Prof. Alan Smith",
+                fee: 600
+            },
+            {
+                id: 5,
+                name: "Paper Presentation",
+                description: "Research Paper Competition",
+                date: "15 Nov 2024",
+                time: "2:00 PM - 6:00 PM",
+                venue: "Conference Hall",
+                instructor: "Dr. Emily Wilson",
+                fee: 200
+            }
+        ];
+
+        // DOM Elements
+        const eventsGrid = document.getElementById('eventsGrid');
+        const previewBtn = document.getElementById('previewBtn');
+        const generateBtn = document.getElementById('generateBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const errorMessage = document.getElementById('errorMessage');
+        const errorText = document.getElementById('errorText');
+
+        // Preview elements
+        const previewRegId = document.getElementById('previewRegId');
+        const previewName = document.getElementById('previewName');
+        const previewCollege = document.getElementById('previewCollege');
+        const previewEmail = document.getElementById('previewEmail');
+        const previewPhone = document.getElementById('previewPhone');
+        const previewTransaction = document.getElementById('previewTransaction');
+        const previewEvents = document.getElementById('previewEvents');
+        const previewQR = document.getElementById('previewQR');
+
+        // Form elements
+        const fullNameInput = document.getElementById('fullName');
+        const collegeNameInput = document.getElementById('collegeName');
+        const emailInput = document.getElementById('email');
+        const phoneInput = document.getElementById('phone');
+        const registrationIdInput = document.getElementById('registrationId');
+        const transactionIdInput = document.getElementById('transactionId');
+        const instructionsInput = document.getElementById('instructions');
+
+        // Selected events
+        let selectedEvents = [];
+
+        // Initialize
+        function init() {
+            loadEvents();
+            setupEventListeners();
+            generateSampleData();
+        }
+
+        // Load events into grid
+        function loadEvents() {
+            eventsGrid.innerHTML = '';
+            events.forEach(event => {
+                const eventDiv = document.createElement('div');
+                eventDiv.className = 'event-checkbox';
+                eventDiv.innerHTML = `
+                    <input type="checkbox" id="event-${event.id}" value="${event.id}">
+                    <div class="event-name">${event.name}</div>
+                    <div class="event-price">₹${event.fee}</div>
+                    <div class="event-time">${event.date}<br>${event.time}</div>
+                `;
+                
+                eventDiv.addEventListener('click', () => {
+                    const checkbox = eventDiv.querySelector('input');
+                    checkbox.checked = !checkbox.checked;
+                    
+                    if (checkbox.checked) {
+                        eventDiv.classList.add('selected');
+                        if (!selectedEvents.includes(event.id)) {
+                            selectedEvents.push(event.id);
+                        }
+                    } else {
+                        eventDiv.classList.remove('selected');
+                        selectedEvents = selectedEvents.filter(id => id !== event.id);
+                    }
+                    
+                    // Update preview
+                    updatePreview();
+                });
+                
+                eventsGrid.appendChild(eventDiv);
+            });
+        }
+
+        // Generate sample data
+        function generateSampleData() {
+            fullNameInput.value = 'Rahul Sharma';
+            collegeNameInput.value = 'IIT Delhi';
+            emailInput.value = 'rahul.sharma@example.com';
+            phoneInput.value = '9876543210';
+            registrationIdInput.value = 'TECH' + Date.now().toString().slice(-6);
+            transactionIdInput.value = 'TXN' + Math.floor(Math.random() * 1000000000);
+            
+            // Auto-select first two events
+            setTimeout(() => {
+                const checkboxes = document.querySelectorAll('.event-checkbox input');
+                checkboxes[0].checked = true;
+                checkboxes[0].parentElement.classList.add('selected');
+                checkboxes[1].checked = true;
+                checkboxes[1].parentElement.classList.add('selected');
+                selectedEvents = [1, 2];
+                updatePreview();
+            }, 100);
+        }
+
+        // Validate form
+        function validateForm() {
+            if (!fullNameInput.value.trim()) {
+                showError('Please enter full name');
+                fullNameInput.focus();
+                return false;
+            }
+            if (!collegeNameInput.value.trim()) {
+                showError('Please enter college name');
+                collegeNameInput.focus();
+                return false;
+            }
+            if (!emailInput.value.trim() || !isValidEmail(emailInput.value)) {
+                showError('Please enter a valid email');
+                emailInput.focus();
+                return false;
+            }
+            if (!phoneInput.value.trim() || !isValidPhone(phoneInput.value)) {
+                showError('Please enter a valid 10-digit phone number');
+                phoneInput.focus();
+                return false;
+            }
+            if (!registrationIdInput.value.trim()) {
+                showError('Please enter registration ID');
+                registrationIdInput.value = 'TECH' + Date.now().toString().slice(-6);
+            }
+            if (selectedEvents.length === 0) {
+                showError('Please select at least one event');
+                return false;
+            }
+            return true;
+        }
+
+        // Email validation
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        // Phone validation
+        function isValidPhone(phone) {
+            const phoneRegex = /^\d{10}$/;
+            return phoneRegex.test(phone);
+        }
+
+        // Show error
+        function showError(message) {
+            errorText.textContent = message;
+            errorMessage.style.display = 'block';
+            setTimeout(() => {
+                errorMessage.style.display = 'none';
+            }, 5000);
+        }
+
+        // Update preview
+        function updatePreview() {
+            if (!fullNameInput.value.trim()) return;
+            
+            previewRegId.textContent = registrationIdInput.value || 'N/A';
+            previewName.textContent = fullNameInput.value;
+            previewCollege.textContent = collegeNameInput.value;
+            previewEmail.textContent = emailInput.value;
+            previewPhone.textContent = phoneInput.value;
+            previewTransaction.textContent = transactionIdInput.value || 'N/A';
+            
+            // Update events
+            previewEvents.innerHTML = `
+                <div style="color: #166088; font-weight: 600; margin-bottom: 10px;">
+                    <i class="fas fa-calendar-alt"></i> REGISTERED EVENTS (${selectedEvents.length})
+                </div>
+            `;
+            
+            if (selectedEvents.length > 0) {
+                selectedEvents.forEach(eventId => {
+                    const event = events.find(e => e.id === eventId);
+                    const eventDiv = document.createElement('div');
+                    eventDiv.className = 'event-item';
+                    eventDiv.innerHTML = `
+                        <div class="event-title">${event.name}</div>
+                        <div class="event-details">
+                            ${event.date} | ${event.time}<br>
+                            ${event.venue} | ${event.instructor}<br>
+                            <strong>Fee: ₹${event.fee}</strong>
+                        </div>
+                    `;
+                    previewEvents.appendChild(eventDiv);
+                });
+                
+                // Add total
+                const total = selectedEvents.reduce((sum, id) => {
+                    const event = events.find(e => e.id === id);
+                    return sum + event.fee;
+                }, 0);
+                
+                const totalDiv = document.createElement('div');
+                totalDiv.style.cssText = `
+                    background: #166088;
+                    color: white;
+                    padding: 8px;
+                    border-radius: 4px;
+                    margin-top: 10px;
+                    font-weight: bold;
+                    text-align: center;
+                `;
+                totalDiv.textContent = `Total Fee: ₹${total}`;
+                previewEvents.appendChild(totalDiv);
+            }
+            
+            // Generate QR code for preview
+            generateQRCodePreview();
+        }
+
+        // Generate QR code for preview
+        function generateQRCodePreview() {
+            // Simple QR code simulation for preview
+            const qrData = `${registrationIdInput.value || 'TECH2024001'}`;
+            // In a real implementation, you would generate actual QR code here
+            previewQR.innerHTML = `<span>QR: ${qrData}</span>`;
+        }
+
+        // Preview admit card
+        function previewAdmitCard() {
+            if (validateForm()) {
+                updatePreview();
+                downloadBtn.style.display = 'flex';
+            }
+        }
+
+        // Generate PDF
+        async function generatePDF() {
+            if (!validateForm()) return;
+            
+            loadingIndicator.style.display = 'block';
+            generateBtn.disabled = true;
+            
+            try {
+                // Create PDF content
+                const pdfContent = createPDFContent();
+                
+                // Create PDF
+                const pdf = new jsPDF('p', 'px', 'a4');
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
+                
+                // Add background gradient
+                pdf.setFillColor(74, 111, 165);
+                pdf.rect(0, 0, pageWidth, 80, 'F');
+                pdf.setFillColor(22, 96, 136);
+                pdf.rect(0, 80, pageWidth, pageHeight - 80, 'F');
+                
+                // Add header
+                pdf.setFontSize(28);
+                pdf.setTextColor(255, 255, 255);
+                pdf.text('TECH FEST 2024', pageWidth / 2, 45, { align: 'center' });
+                pdf.setFontSize(16);
+                pdf.text('OFFICIAL ADMIT CARD', pageWidth / 2, 65, { align: 'center' });
+                
+                // Add white content area
+                pdf.setFillColor(255, 255, 255);
+                pdf.roundedRect(20, 90, pageWidth - 40, pageHeight - 130, 10, 10, 'F');
+                
+                // Add participant details
+                pdf.setFontSize(12);
+                pdf.setTextColor(0, 0, 0);
+                let yPos = 120;
+                
+                const details = [
+                    ['Registration ID:', registrationIdInput.value || 'N/A'],
+                    ['Name:', fullNameInput.value],
+                    ['College:', collegeNameInput.value],
+                    ['Email:', emailInput.value],
+                    ['Phone:', phoneInput.value],
+                    ['Transaction ID:', transactionIdInput.value || 'N/A']
+                ];
+                
+                details.forEach(([label, value]) => {
+                    pdf.setFont('helvetica', 'bold');
+                    pdf.text(label, 40, yPos);
+                    pdf.setFont('helvetica', 'normal');
+                    pdf.text(value, 160, yPos);
+                    yPos += 25;
+                });
+                
+                // Add events section
+                yPos += 10;
+                pdf.setFont('helvetica', 'bold');
+                pdf.setTextColor(22, 96, 136);
+                pdf.text('REGISTERED EVENTS', 40, yPos);
+                yPos += 20;
+                
+                // Add events
+                pdf.setFontSize(10);
+                pdf.setTextColor(0, 0, 0);
+                selectedEvents.forEach(eventId => {
+                    const event = events.find(e => e.id === eventId);
+                    pdf.setFont('helvetica', 'bold');
+                    pdf.text(`• ${event.name}`, 50, yPos);
+                    pdf.setFont('helvetica', 'normal');
+                    pdf.text(`${event.date} | ${event.time} | ${event.venue}`, 50, yPos + 12);
+                    pdf.text(`Instructor: ${event.instructor} | Fee: ₹${event.fee}`, 50, yPos + 24);
+                    yPos += 40;
+                });
+                
+                // Add total
+                const total = selectedEvents.reduce((sum, id) => {
+                    const event = events.find(e => e.id === id);
+                    return sum + event.fee;
+                }, 0);
+                
+                yPos += 10;
+                pdf.setFont('helvetica', 'bold');
+                pdf.setTextColor(255, 255, 255);
+                pdf.setFillColor(22, 96, 136);
+                pdf.roundedRect(40, yPos, pageWidth - 80, 30, 5, 5, 'F');
+                pdf.text(`TOTAL FEE: ₹${total}`, pageWidth / 2, yPos + 18, { align: 'center' });
+                
+                // Add footer
+                yPos = pageHeight - 40;
+                pdf.setFontSize(10);
+                pdf.setTextColor(255, 255, 255);
+                pdf.text('Venue: Central University Campus | Date: 15-17 November 2024', pageWidth / 2, yPos, { align: 'center' });
+                pdf.text('Contact: 9876543210 | Email: techfest2024@email.com', pageWidth / 2, yPos + 15, { align: 'center' });
+                
+                // Save PDF
+                const fileName = `AdmitCard_${registrationIdInput.value || 'TECHFEST'}.pdf`;
+                pdf.save(fileName);
+                
+                showSuccess('PDF generated successfully!');
+                
+            } catch (error) {
+                console.error('PDF generation error:', error);
+                showError('Failed to generate PDF. Please try again.');
+            } finally {
+                loadingIndicator.style.display = 'none';
+                generateBtn.disabled = false;
+            }
+        }
+
+        // Create PDF content for html2canvas method (alternative)
+        function createPDFContent() {
+            const pdfDiv = document.getElementById('admitCardForPDF');
+            pdfDiv.innerHTML = `
+                <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #4a6fa5 0%, #166088 100%); padding: 30px;">
+                    <div style="background: white; border-radius: 15px; height: 100%; padding: 30px;">
+                        <div style="text-align: center; margin-bottom: 30px;">
+                            <h1 style="color: #166088; margin: 0;">TECH FEST 2024</h1>
+                            <h3 style="color: #4a6fa5; margin: 5px 0 0 0;">OFFICIAL ADMIT CARD</h3>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <div style="display: flex; margin-bottom: 15px;">
+                                <div style="width: 150px; font-weight: bold; color: #166088;">Registration ID:</div>
+                                <div>${registrationIdInput.value || 'N/A'}</div>
+                            </div>
+                            <div style="display: flex; margin-bottom: 15px;">
+                                <div style="width: 150px; font-weight: bold; color: #166088;">Name:</div>
+                                <div>${fullNameInput.value}</div>
+                            </div>
+                            <div style="display: flex; margin-bottom: 15px;">
+                                <div style="width: 150px; font-weight: bold; color: #166088;">College:</div>
+                                <div>${collegeNameInput.value}</div>
+                            </div>
+                            <div style="display: flex; margin-bottom: 15px;">
+                                <div style="width: 150px; font-weight: bold; color: #166088;">Email:</div>
+                                <div>${emailInput.value}</div>
+                            </div>
+                            <div style="display: flex; margin-bottom: 15px;">
+                                <div style="width: 150px; font-weight: bold; color: #166088;">Phone:</div>
+                                <div>${phoneInput.value}</div>
+                            </div>
+                            <div style="display: flex; margin-bottom: 15px;">
+                                <div style="width: 150px; font-weight: bold; color: #166088;">Transaction ID:</div>
+                                <div>${transactionIdInput.value || 'N/A'}</div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin: 30px 0;">
+                            <h3 style="color: #166088; border-bottom: 2px solid #4a6fa5; padding-bottom: 5px;">REGISTERED EVENTS</h3>
+                            ${selectedEvents.map(eventId => {
+                                const event = events.find(e => e.id === eventId);
+                                return `
+                                    <div style="background: #f8f9fa; padding: 10px; margin: 10px 0; border-left: 4px solid #4a6fa5;">
+                                        <div style="font-weight: bold; color: #166088;">${event.name}</div>
+                                        <div style="color: #666; font-size: 14px;">${event.date} | ${event.time}</div>
+                                        <div style="color: #666; font-size: 14px;">${event.venue} | ${event.instructor}</div>
+                                        <div style="color: #ff6b6b; font-weight: bold;">Fee: ₹${event.fee}</div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                        
+                        <div style="text-align: center; margin-top: 30px;">
+                            <div style="display: inline-block; width: 150px; height: 150px; border: 1px solid #ddd; padding: 10px;">
+                                <div style="color: #666; font-size: 14px; margin-top: 60px;">QR Code</div>
+                            </div>
+                            <p style="color: #666; font-size: 14px; margin-top: 10px;">Scan at event entrance</p>
+                        </div>
+                        
+                        <div style="margin-top: 40px; padding-top: 20px; border-top: 1px dashed #ddd; text-align: center; color: #666; font-size: 12px;">
+                            <p>Venue: Central University Campus | Date: 15-17 November 2024</p>
+                            <p>Contact: 9876543210 | Email: techfest2024@email.com</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            return pdfDiv;
+        }
+
+        // Alternative PDF generation using html2canvas
+        async function generatePDFWithCanvas() {
+            if (!validateForm()) return;
+            
+            loadingIndicator.style.display = 'block';
+            generateBtn.disabled = true;
+            
+            try {
+                const pdfDiv = createPDFContent();
+                const canvas = await html2canvas(pdfDiv, {
+                    scale: 2,
+                    useCORS: true,
+                    logging: false
+                });
+                
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const imgWidth = 210;
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                
+                pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+                
+                const fileName = `AdmitCard_${registrationIdInput.value || 'TECHFEST'}.pdf`;
+                pdf.save(fileName);
+                
+                showSuccess('PDF generated successfully!');
+                
+            } catch (error) {
+                console.error('PDF generation error:', error);
+                showError('Failed to generate PDF. Please try again.');
+            } finally {
+                loadingIndicator.style.display = 'none';
+                generateBtn.disabled = false;
+            }
+        }
+
+        // Show success message
+        function showSuccess(message) {
+            const successDiv = document.createElement('div');
+            successDiv.className = 'message success';
+            successDiv.style.display = 'block';
+            successDiv.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
+            document.querySelector('.form-section').appendChild(successDiv);
+            
+            setTimeout(() => {
+                successDiv.remove();
+            }, 3000);
+        }
+
+        // Reset form
+        function resetForm() {
+            fullNameInput.value = '';
+            collegeNameInput.value = '';
+            emailInput.value = '';
+            phoneInput.value = '';
+            registrationIdInput.value = '';
+            transactionIdInput.value = '';
+            instructionsInput.value = '';
+            
+            // Clear selected events
+            selectedEvents = [];
+            document.querySelectorAll('.event-checkbox').forEach(checkbox => {
+                checkbox.classList.remove('selected');
+                checkbox.querySelector('input').checked = false;
+            });
+            
+            // Reset preview
+            previewRegId.textContent = 'TECH2024001';
+            previewName.textContent = 'John Doe';
+            previewCollege.textContent = 'XYZ University';
+            previewEmail.textContent = 'john@example.com';
+            previewPhone.textContent = '9876543210';
+            previewTransaction.textContent = 'TXN123456789';
+            previewEvents.innerHTML = `
+                <div style="color: #166088; font-weight: 600; margin-bottom: 10px;">
+                    <i class="fas fa-calendar-alt"></i> REGISTERED EVENTS
+                </div>
+            `;
+            
+            downloadBtn.style.display = 'none';
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            previewBtn.addEventListener('click', previewAdmitCard);
+            generateBtn.addEventListener('click', generatePDF);
+            downloadBtn.addEventListener('click', generatePDF);
+            resetBtn.addEventListener('click', resetForm);
+            
+            // Auto-update preview on input
+            [fullNameInput, collegeNameInput, emailInput, phoneInput, registrationIdInput, transactionIdInput].forEach(input => {
+                input.addEventListener('input', updatePreview);
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

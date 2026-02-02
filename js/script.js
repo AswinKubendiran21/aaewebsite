@@ -2,44 +2,47 @@
 
 // DOM Content Loaded
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize all components
-    initNavigation();
-    initMobileDropdowns();
-    initEventsTimeline();
-    initQuotesSlider();
-    initStatsCounter();
-    initTeamsFilter();
-    initMembersSearch();
-    initCalendar();
-    initEventsViewToggle();
-    initScheduleTabs();
-    initFAQ();
-    initContactForm();
-    
-    // Load dynamic content based on page
-    const page = document.body.id || getCurrentPage();
-    
-    switch(page) {
-        case 'home-page':
-            loadHomeEvents();
-            break;
-        case 'about-page':
-            break;
-        case 'teams-page':
-            loadTeams();
-            break;
-        case 'members-page':
-            loadMembers();
-            break;
-        case 'events-page':
-            loadEventsList();
-            break;
-        case 'flight26-page':
-            loadSchedule();
-            break;
-        case 'contact-page':
-            break;
-    }
+    // Load header and footer first
+    includeHTML().then(() => {
+        // Then initialize all components
+        initNavigation();
+        initMobileDropdowns();
+        initEventsTimeline();
+        initQuotesSlider();
+        initStatsCounter();
+        initTeamsFilter();
+        initMembersSearch();
+        initCalendar();
+        initEventsViewToggle();
+        initScheduleTabs();
+        initFAQ();
+        initContactForm();
+        
+        // Load dynamic content based on page
+        const page = document.body.id || getCurrentPage();
+        
+        switch(page) {
+            case 'home-page':
+                loadHomeEvents();
+                break;
+            case 'about-page':
+                break;
+            case 'teams-page':
+                loadTeams();
+                break;
+            case 'members-page':
+                loadMembers();
+                break;
+            case 'events-page':
+                loadEventsList();
+                break;
+            case 'flight26-page':
+                loadSchedule();
+                break;
+            case 'contact-page':
+                break;
+        }
+    });
 });
 
 // ===== Utility Functions =====
@@ -54,7 +57,58 @@ function getCurrentPage() {
     return 'home-page';
 }
 
-// ===== Navigation =====
+// ===== Include HTML Function =====
+function includeHTML() {
+    return new Promise((resolve) => {
+        const elements = document.querySelectorAll('[data-include]');
+        let loadedCount = 0;
+        const totalElements = elements.length;
+        
+        if (totalElements === 0) {
+            resolve();
+            return;
+        }
+        
+        elements.forEach(element => {
+            const file = element.getAttribute('data-include');
+            if (file) {
+                fetch(file)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`Failed to load ${file}: ${response.status}`);
+                        }
+                        return response.text();
+                    })
+                    .then(data => {
+                        element.innerHTML = data;
+                        loadedCount++;
+                        
+                        // Remove the data-include attribute to prevent re-processing
+                        element.removeAttribute('data-include');
+                        
+                        if (loadedCount === totalElements) {
+                            resolve();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error loading include file:', error);
+                        element.innerHTML = `<p>Error loading ${file}</p>`;
+                        loadedCount++;
+                        
+                        if (loadedCount === totalElements) {
+                            resolve();
+                        }
+                    });
+            } else {
+                loadedCount++;
+                if (loadedCount === totalElements) {
+                    resolve();
+                }
+            }
+        });
+    });
+}
+
 // ===== Navigation =====
 function initNavigation() {
     const menuToggle = document.getElementById('menuToggle');
@@ -62,7 +116,7 @@ function initNavigation() {
     
     if (menuToggle && navMenu) {
         menuToggle.addEventListener('click', function(e) {
-            e.stopPropagation(); // Prevent event from bubbling up
+            e.stopPropagation();
             navMenu.classList.toggle('active');
             
             // Update menu icon
@@ -77,8 +131,10 @@ function initNavigation() {
         const navLinks = document.querySelectorAll('.nav-link');
         navLinks.forEach(link => {
             link.addEventListener('click', () => {
-                navMenu.classList.remove('active');
-                menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+                if (window.innerWidth <= 768) {
+                    navMenu.classList.remove('active');
+                    menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+                }
             });
         });
         
@@ -102,7 +158,7 @@ function initNavigation() {
     // Highlight current page in navigation
     highlightCurrentPage();
 }
-// Add this function after initNavigation() function
+
 function initMobileDropdowns() {
     const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
     
@@ -172,25 +228,26 @@ function initEventsTimeline() {
     
     const events = [
         {
-            date: 'Aug 22, 2025',
-            title: 'Association Inauguration',
-            description: 'The grand inauguration of the Association of Aeronautical Engineers (AAE), marking the beginning of a new journey with inspiring talks and cultural highlights.'
+            date: 'Mar 21-22, 2026',
+            title: 'FLIGHT’26',
+            description: 'National-level technical symposium organized by the Association of Aeronautical Engineers (AAE), bringing together students, academicians, and industry enthusiasts. The event serves as a platform to explore aerospace innovations through technical events, workshops, and expert interactions, fostering knowledge exchange, creativity, and professional growth in the field of aeronautical engineering.'
         },
         {
-            date: 'Aug 22, 2025',
-            title: 'Guest Lecture',
-            description: 'An insightful session by an eminent speaker sharing knowledge on aerospace advancements and career pathways.'
+            date: '',
+            title: 'Guest Lecture on Emerging Trends in Aerospace Engineering',
+            description: 'An expert talk focusing on recent advancements in aerodynamics, propulsion, and space technologies. The session aims to give students industry-oriented insights and future research directions.'
         },
         {
-            date: 'Aug 25, 2025',
-            title: 'Guest Lecture',
-            description: 'An insightful session by Mr. Muguthan, Lead Engineer at ePlane Company, sharing his expertise on aerospace advancements, cutting-edge technologies, and career pathways in the aviation industry.'
+            date: '',
+            title: 'Hands-on Workshop on Aircraft Design and Analysis',
+            description: 'Hands-on Workshop on Aircraft Design and Analysis'
         },
         {
-            date: 'Oct 15, 2025',
-            title: 'Youth Awakening Technical Symposium',
-            description: 'A one-day symposium commemorating Youth Awakening Day, featuring technical paper presentations, workshops, and discussions to ignite young minds.'
+            date: '',
+            title: 'Technical Quiz and Ideathon',
+            description: 'A competitive event designed to test core aerospace fundamentals and encourage innovative thinking. Students will collaborate, brainstorm solutions, and present ideas related to current aerospace challenges.'
         }
+
     ];
     
     let timelineHTML = '';
@@ -260,14 +317,15 @@ function initStatsCounter() {
         const updateCounter = () => {
             if (current < target) {
                 current += increment;
-                stat.textContent = Math.ceil(current);
+                // CHANGE THIS LINE:
+                stat.textContent = Math.ceil(current) + "+"; // Added "+"
                 setTimeout(updateCounter, 20);
             } else {
-                stat.textContent = target;
+                // CHANGE THIS LINE TOO:
+                stat.textContent = target + "+"; // Added "+"
             }
         };
         
-        // Start counter when element is in viewport
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -282,7 +340,6 @@ function initStatsCounter() {
 }
 
 // ===== Teams Page =====
-// ===== Teams Page Functions =====
 function initTeamsFilter() {
     const filterBtns = document.querySelectorAll('.filter-btn');
     const teamsContainer = document.getElementById('teamsContainer');
@@ -449,227 +506,365 @@ function getTeamsData() {
             description: 'The Core Committee is the governing body of AAE, responsible for overall strategy, decision-making, and coordination between all teams. They ensure the smooth functioning of the association and represent AAE at the institute level.',
             leaders: [
                 {
-                    name: 'Rahul Sharma',
-                    role: 'President',
+                    name: 'Chelian N G',
+                    role: 'Chairperson',
                     department: 'Aerospace Engineering',
-                    image: 'assets/logo.png',
+                    image: 'assets/chelian.png',
                     linkedin: '#',
                     email: 'rahul.sharma@example.com'
                 },
                 {
-                    name: 'Priya Patel',
-                    role: 'Vice President',
+                    name: 'Arun V',
+                    role: 'Secretary',
                     department: 'Aerospace Engineering',
-                    image: '',
+                    image: 'assets/arun.png',
                     linkedin: '#',
                     email: 'priya.patel@example.com'
                 },
                 {
-                    name: 'Arun Kumar',
-                    role: 'General Secretary',
+                    name: 'Saniya Banu',
+                    role: 'Programme Coordinator',
                     department: 'Aerospace Engineering',
-                    image: '',
+                    image: 'assets/saniya.png',
+                    linkedin: '#',
+                    email: 'arun.kumar@example.com'
+                },
+                {
+                    name: 'Rohan Kishore',
+                    role: 'Vice-chairperson',
+                    department: 'Aerospace Engineering',
+                    image: 'assets/rohan.png',
+                    linkedin: '#',
+                    email: 'arun.kumar@example.com'
+                },
+                {
+                    name: 'Ezhilarasu',
+                    role: 'Treasurer',
+                    department: 'Aerospace Engineering',
+                    image: 'assets/ezhil.png',
+                    linkedin: '#',
+                    email: 'arun.kumar@example.com'
+                },
+                {
+                    name: 'Oviya',
+                    role: 'Joint Secretary',
+                    department: 'Aerospace Engineering',
+                    image: 'assets/oviya.jpeg',
                     linkedin: '#',
                     email: 'arun.kumar@example.com'
                 }
             ],
             members: [
-                { name: 'Aditya Verma', role: 'Member', image: '' },
-                { name: 'Bhavya Singh', role: 'Member', image: '' },
-                { name: 'Chetan Reddy', role: 'Member', image: '' },
-                { name: 'Divya Nair', role: 'Member', image: '' },
-                { name: 'Eshaan Gupta', role: 'Member', image: '' },
-                { name: 'Fatima Khan', role: 'Member', image: '' },
-                { name: 'Gaurav Mehta', role: 'Member', image: '' },
-                { name: 'Harshita Joshi', role: 'Member', image: '' },
-                { name: 'Ishaan Sharma', role: 'Member', image: '' },
-                { name: 'Jhanvi Patel', role: 'Member', image: '' }
             ]
         },
         {
             id: 2,
-            name: 'Technical Team',
+            name: 'Alumni Contact Team',
             category: 'technical',
-            description: 'The Technical Team handles all technical workshops, research collaborations, and innovation projects. They organize hands-on sessions on aerospace technologies, CAD modelling, simulation software, and aeromodelling.',
+            description: 'The long-term vision is to create a complete, accurate, and well-maintained alumni database that serves as the backbone for all engagement activities. For AAE 2025–26, the focus will be on using insights from Google Form responses to design seminars, guest lectures, and other meaningful interactions. A key highlight of the year will be the “Alumni Tunnel” event, aimed at celebrating and reconnecting past students Building harmonical relationship with alumni - This includes refining existing contact records, welcoming new alumni connections, and keeping interactions consistent throughout the year.',
             leaders: [
                 {
-                    name: 'Sneha Reddy',
-                    role: 'Technical Head',
+                    name: 'Agathish M',
+                    role: 'Head',
                     department: 'Aerospace Engineering',
-                    image: '',
+                    image: 'assets/agathish.png',
                     linkedin: '#',
                     email: 'sneha.reddy@example.com'
                 },
                 {
-                    name: 'Deepika Joshi',
-                    role: 'Technical Co-Head',
+                    name: 'Parvathvarthini R M',
+                    role: 'Head',
                     department: 'Aerospace Engineering',
-                    image: '',
+                    image: 'assets/parvathavarthini.png',
+                    linkedin: '#',
+                    email: 'deepika.joshi@example.com'
+                },
+                {
+                    name: 'Kavin',
+                    role: 'Head',
+                    department: 'Aerospace Engineering',
+                    image: 'assets/kavin.png',
                     linkedin: '#',
                     email: 'deepika.joshi@example.com'
                 }
             ],
             members: [
-                { name: 'Karthik Nair', role: 'Workshop Coordinator', image: '' },
-                { name: 'Lakshmi Iyer', role: 'Research Coordinator', image: '' },
-                { name: 'Manish Kumar', role: 'CAD Specialist', image: '' },
-                { name: 'Neha Sharma', role: 'Simulation Expert', image: '' },
-                { name: 'Omkar Deshpande', role: 'Aeromodelling Lead', image: '' },
-                { name: 'Pooja Gupta', role: 'Technical Member', image: '' }
             ]
         },
         {
             id: 3,
-            name: 'Events Team',
+            name: 'Academics Teams',
             category: 'event',
-            description: 'The Events Team plans and executes all AAE events including FLIGHT 26, guest lectures, seminars, and symposiums. They handle logistics, venue management, speaker coordination, and event promotion.',
+            description: 'Our motive is to enrich the technical knowledge of students through focused learning and practical exposure. Our works include structured GATE AE sessions with structured sessions, Students Collaboration Projects through which students with common interests join together working on projects and showcasing aerospace concepts, trends and innovations through association&apos;s YouTube channel "Aero verse". One of the most notable works of our team is the "Magazine". It is a 24 page monthly magazine, that comprises articles based on  a theme, student articles, news related to the field of aeronautics, crossword puzzles, etc.,',
             leaders: [
                 {
-                    name: 'Vikram Singh',
-                    role: 'Events Head',
+                    name: 'Jefy Stanly S',
+                    role: 'Head',
                     department: 'Aerospace Engineering',
-                    image: '',
+                    image: 'assets/jefy.png',
                     linkedin: '#',
                     email: 'vikram.singh@example.com'
                 },
                 {
-                    name: 'Anjali Mehta',
-                    role: 'Events Co-Head',
+                    name: 'Pradeesh Vel Nirmal',
+                    role: 'Head',
                     department: 'Aerospace Engineering',
-                    image: '',
+                    image: 'assets/pradeesh.png',
                     linkedin: '#',
                     email: 'anjali.mehta@example.com'
+                },
+                {
+                    name: 'Parvathvarthini R M',
+                    role: 'Head',
+                    department: 'Aerospace Engineering',
+                    image: 'assets/parvathavarthini.png',
+                    linkedin: '#',
+                    email: 'deepika.joshi@example.com'
                 }
             ],
             members: [
-                { name: 'Rajesh Kumar', role: 'Logistics Coordinator', image: '' },
-                { name: 'Sonia Reddy', role: 'Venue Manager', image: '' },
-                { name: 'Tarun Sharma', role: 'Speaker Coordinator', image: '' },
-                { name: 'Uma Nair', role: 'Event Planner', image: '' },
-                { name: 'Varun Gupta', role: 'Hospitality Lead', image: '' }
             ]
         },
         {
             id: 4,
             name: 'Student Welfare Team',
             category: 'welfare',
-            description: 'The Student Welfare Team focuses on member support, alumni relations, and career guidance. They organize GATE classes, study groups, internship assistance, and alumni networking events.',
+            description:'The Student Welfare Team of the Association of Aeronautical Engineers aims to support and empower students. The team provides a platform for students to voice their concerns, share ideas, and develop professionally.The team also offers opportunities for students to develop their skills and gain industry insights. Our goal is to create a community where students can thrive, share ideas, and grow together.',
             leaders: [
                 {
-                    name: 'Rohit Verma',
-                    role: 'Welfare Head',
+                    name: 'Sudharshana Govindhan',
+                    role: 'Head',
                     department: 'Aerospace Engineering',
-                    image: '',
+                    image: 'assets/sudharasan.png',
                     linkedin: '#',
                     email: 'rohit.verma@example.com'
                 },
                 {
-                    name: 'Shreya Patel',
-                    role: 'Welfare Co-Head',
+                    name: 'Saniya Banu',
+                    role: 'Head',
                     department: 'Aerospace Engineering',
-                    image: '',
+                    image: 'assets/saniya.png',
+                    linkedin: '#',
+                    email: 'arun.kumar@example.com'
+                },
+                {
+                    name: 'Malavika N Raj',
+                    role: 'Head',
+                    department: 'Aerospace Engineering',
+                    image: 'assets/malavika.png',
                     linkedin: '#',
                     email: 'shreya.patel@example.com'
                 }
             ],
             members: [
-                { name: 'Abhishek Singh', role: 'Alumni Coordinator', image: '' },
-                { name: 'Bina Desai', role: 'Career Counselor', image: '' },
-                { name: 'Chirag Mehta', role: 'Academic Support', image: '' },
-                { name: 'Dipika Nair', role: 'Member Relations', image: '' },
-                { name: 'Eshan Joshi', role: 'Mentorship Lead', image: '' }
             ]
         },
         {
             id: 5,
             name: 'Renovation Team',
             category: 'renovation',
-            description: 'The Renovation Team manages infrastructure improvements, lab maintenance, and workspace optimization in the Aerospace Department. They work on projects to enhance learning and research facilities.',
+            description:'The team has harboured on a task of thorough analysis of the various amenities of our department, such as the classrooms, labs, study models. Following this assessment, listing of necessary facilities, and their quotations, as inquired from trusted sources, compiled with suggestions from professors will constitute a document. This document is our goal, wherein we approach our alumni for potential funding, and forward it to the management so that it takes upon itself the renovation our department demands. The renovation team’s objective is to bring to attention any deficits, and indulge ourselves or the concerned personnel to rectify the same.',
             leaders: [
                 {
-                    name: 'Manoj Kumar',
-                    role: 'Renovation Head',
-                    department: 'Mechanical Engineering',
-                    image: '',
+                    name: 'Swathi P',
+                    role: 'Head',
+                    department: 'Aerospace Engineering',
+                    image: 'assets/swathi.png',
                     linkedin: '#',
                     email: 'manoj.kumar@example.com'
                 },
                 {
-                    name: 'Nisha Reddy',
-                    role: 'Renovation Co-Head',
-                    department: 'Civil Engineering',
-                    image: '',
+                    name: 'Jegan',
+                    role: 'Head',
+                    department: 'Aerospace Engineering',
+                    image: 'assets/jegan.png',
                     linkedin: '#',
                     email: 'nisha.reddy@example.com'
                 }
             ],
             members: [
-                { name: 'Prakash Singh', role: 'Infrastructure Lead', image: '' },
-                { name: 'Rashmi Gupta', role: 'Lab Coordinator', image: '' },
-                { name: 'Suresh Nair', role: 'Project Manager', image: '' },
-                { name: 'Tina Sharma', role: 'Design Consultant', image: '' }
             ]
         },
         {
             id: 6,
-            name: 'Design & Media Team',
+            name: 'Design, Editing, and Social Media Handling Team',
             category: 'design',
-            description: 'The Design & Media Team handles all creative work including website management, social media, graphic design, photography, and video production. They create promotional materials and maintain AAE\'s online presence.',
+            description: 'The Design, Editing, and Social Media Handling Team is dedicated to crafting visually stunning and diverse poster designs for our department’s workshops, seminars, and symposiums, ensuring each event is showcased with creativity and impact. Our skilled video editing team produces high-quality, captivating content for our YouTube channel, elevating our brand’s presence with professional and engaging videos. We also expertly manage our Association’s social media platforms, delivering consistent, timely, and dynamic updates to keep our supporters informed, inspired, and connected. With a passion for innovation and excellence, we strive to amplify our department’s vision, foster community engagement, and set new standards in creative communication.',
             leaders: [
-                {
-                    name: 'Karthik Nair',
-                    role: 'Design Head',
-                    department: 'Computer Science',
-                    image: '',
+                 {
+                    name: 'Bharath R',
+                    role: 'Head',
+                    department: 'Aerospace Engineering',
+                    image: 'assets/bharath.png',
                     linkedin: '#',
-                    email: 'karthik.nair@example.com'
+                    email: 'nisha.reddy@example.com'
+                },
+                 {
+                    name: 'Joy M Thomas',
+                    role: 'Head',
+                    department: 'Aerospace Engineering',
+                    image: 'assets/joy.png',
+                    linkedin: '#',
+                    email: 'nisha.reddy@example.com'
                 },
                 {
-                    name: 'Lavanya Iyer',
-                    role: 'Media Co-Head',
-                    department: 'Electronics Engineering',
-                    image: '',
+                    name: 'Harish Kumar K',
+                    role: 'Head',
+                    department: 'Aerospace Engineering',
+                    image: 'assets/harish.png',
                     linkedin: '#',
-                    email: 'lavanya.iyer@example.com'
+                    email: 'nisha.reddy@example.com'
+                },
+                {
+                    name: 'Shrinath R R',
+                    role: 'Head',
+                    department: 'Aerospace Engineering',
+                    image: 'assets/shrinath.png',
+                    linkedin: '#',
+                    email: 'nisha.reddy@example.com'
                 }
             ],
             members: [
-                { name: 'Mohan Raj', role: 'Web Developer', image: '' },
-                { name: 'Nithya S', role: 'Graphic Designer', image: '' },
-                { name: 'Pavan Kumar', role: 'Photographer', image: '' },
-                { name: 'Ritu Sharma', role: 'Content Writer', image: '' },
-                { name: 'Sachin R', role: 'Video Editor', image: '' }
+            ]
+        },
+        {
+            id: 7,
+            name: 'Event Inchargers Teams',
+            category: 'incharge',
+            description: 'As the Event incharges Team, we take responsibility for planning, coordinating, and ensuring the smooth execution of the event. Especially, we indulge in conducting technical competitions, workshops, seminars, lectures etc., We manage schedules, assign tasks, and maintain clear communication between all the teams.',
+            leaders: [
+                {
+                    name: 'Bharath Kumar R',
+                    role: 'Head',
+                    department: 'Aerospace Engineering',
+                    image: 'assets/bharathpg.png',
+                    linkedin: '#',
+                    email: 'vikram.singh@example.com'
+                },
+                {
+                    name: 'Chelian N G',
+                    role: 'Head',
+                    department: 'Aerospace Engineering',
+                    image: 'assets/chelian.png',
+                    linkedin: '#',
+                    email: 'rahul.sharma@example.com'
+                },
+                {
+                    name: 'Arun V',
+                    role: 'Head',
+                    department: 'Aerospace Engineering',
+                    image: 'assets/arun.png',
+                    linkedin: '#',
+                    email: 'priya.patel@example.com'
+                },
+            ],
+            members: [
+            ]
+        },
+        {
+            id: 8,
+            name: 'Documentation Team',
+            category: 'documentation',
+            description: 'This team is responsible for recording and maintaining all official records of events, meetings, and activities conducted by the association. They prepare detailed reports, minutes of meetings, and event summaries to ensure proper archival of information.',
+            leaders: [
+                {
+                    name: 'Saniya Banu',
+                    role: 'Head',
+                    department: 'Aerospace Engineering',
+                    image: 'assets/saniya.png',
+                    linkedin: '#',
+                    email: 'arun.kumar@example.com'
+                },
+                {
+                    name: 'Shivani',
+                    role: 'Head',
+                    department: 'Aerospace Engineering',
+                    image: 'assets/shivani.png',
+                    linkedin: '#',
+                    email: 'arun.kumar@example.com'
+                },
+                {
+                    name: 'Nilanjana',
+                    role: 'Head',
+                    department: 'Aerospace Engineering',
+                    image: 'assets/nilanjana.png',
+                    linkedin: '#',
+                    email: 'arun.kumar@example.com'
+                },
+                
+            ],
+            members: [
+            ]
+        },
+        {
+            id: 9,
+            name: 'Treasury Assistance Team',
+            category: 'treasury',
+            description:'Our team involves in Preparing a detailed budget estimate for all expected expenses. Also in Collecting and digitally storing all bills and receipts.To keep track of all transactions related to the event. Summarizing all actual expenses with supporting documentation. Analyzing the differences between planned and actual costs and use the analysis to improve future budget estimates.',
+            leaders: [
+                {
+                    name: 'Devapriyan',
+                    role: 'Head',
+                    department: 'Aerospace Engineering',
+                    image: 'assets/dev.png',
+                    linkedin: '#',
+                    email: 'vikram.singh@example.com'
+                },
+                {
+                    name: 'Ezhilarasu',
+                    role: 'Head',
+                    department: 'Aerospace Engineering',
+                    image: 'assets/ezhil.png',
+                    linkedin: '#',
+                    email: 'vikram.singh@example.com'
+                },
+                {
+                    name: 'Ajmal S',
+                    role: 'Head',
+                    department: 'Aerospace Engineering',
+                    image: 'assets/ajmal.png',
+                    linkedin: '#',
+                    email: 'vikram.singh@example.com'
+                }
+            ],
+            members: [
+            ]
+        },
+        {
+            id: 10,
+            name: 'Organising Committee & Logistics',
+            category: 'organising',
+            description:'This team plays a pivotal role in planning, coordinating, and executing departmental events and activities. They manage logistics, scheduling, and communication to ensure smooth operations. The team works closely with faculty, students, and external partners to deliver impactful and well-structured programs.',
+            leaders: [
+                {
+                    name: 'Mathivanan T',
+                    role: 'Head',
+                    department: 'Aerospace Engineering',
+                    image: 'assets/mathi.png',
+                    linkedin: '#',
+                    email: 'vikram.singh@example.com'
+                },
+                {
+                    name: 'Dheenanath',
+                    role: 'Head',
+                    department: 'Aerospace Engineering',
+                    image: 'assets/dheena.png',
+                    linkedin: '#',
+                    email: 'vikram.singh@example.com'
+                },
+                {
+                    name: 'Rohan Kishore',
+                    role: 'Head',
+                    department: 'Aerospace Engineering',
+                    image: 'assets/rohan.png',
+                    linkedin: '#',
+                    email: 'vikram.singh@example.com'
+                }
+            ],
+            members: [
             ]
         }
     ];
-}
-function loadTeamsGrid(teams) {
-    const teamsGrid = document.getElementById('teamsGrid');
-    if (!teamsGrid) return;
-    
-    let html = '';
-    
-    teams.forEach(team => {
-        html += `
-            <div class="team-card" data-team="${team.team}">
-                <div class="team-image">
-                    <i class="fas fa-user"></i>
-                </div>
-                <div class="team-info">
-                    <h3>${team.name}</h3>
-                    <div class="team-role">${team.role}</div>
-                    <div class="team-department">${team.department} Engineering</div>
-                    <div class="team-social">
-                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                    </div>
-                </div>
-            </div>
-        `;
-    });
-    
-    teamsGrid.innerHTML = html;
 }
 
 // ===== Members Page =====
@@ -1145,71 +1340,3 @@ function loadHomeEvents() {
     // This function is called from DOMContentLoaded for home page
     // Events timeline is already initialized by initEventsTimeline()
 }
-// Add this to your existing JavaScript file or in a <script> tag
-document.addEventListener('DOMContentLoaded', function() {
-    const dropdowns = document.querySelectorAll('.dropdown');
-    
-    dropdowns.forEach(dropdown => {
-        const toggle = dropdown.querySelector('.dropdown-toggle');
-        const content = dropdown.querySelector('.dropdown-content');
-        
-        // Add click event for mobile
-        toggle.addEventListener('click', function(e) {
-            if (window.innerWidth <= 768) { // Mobile breakpoint
-                e.preventDefault();
-                content.classList.toggle('show');
-                
-                // Close other dropdowns when opening this one
-                dropdowns.forEach(otherDropdown => {
-                    if (otherDropdown !== dropdown) {
-                        otherDropdown.querySelector('.dropdown-content').classList.remove('show');
-                    }
-                });
-            }
-        });
-        
-        // Close dropdown when clicking elsewhere
-        document.addEventListener('click', function(e) {
-            if (!dropdown.contains(e.target) && window.innerWidth <= 768) {
-                content.classList.remove('show');
-            }
-        });
-    });
-});
-// Function to include HTML files
-function includeHTML() {
-    const elements = document.querySelectorAll('[data-include]');
-    
-    elements.forEach(element => {
-        const file = element.getAttribute('data-include');
-        if (file) {
-            fetch(file)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`Failed to load ${file}: ${response.status}`);
-                    }
-                    return response.text();
-                })
-                .then(data => {
-                    element.innerHTML = data;
-                    
-                    // Re-initialize navigation after header is loaded
-                    if (file === 'header.html') {
-                        initNavigation();
-                    }
-                    
-                    // Highlight active page after navigation is loaded
-                    setTimeout(() => {
-                        highlightCurrentPage();
-                    }, 100);
-                })
-                .catch(error => {
-                    console.error('Error loading include file:', error);
-                    element.innerHTML = `<p>Error loading ${file}</p>`;
-                });
-        }
-    });
-}
-
-// Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', includeHTML);
