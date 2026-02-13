@@ -1340,3 +1340,42 @@ function loadHomeEvents() {
     // This function is called from DOMContentLoaded for home page
     // Events timeline is already initialized by initEventsTimeline()
 }
+
+    // Check device type on website load
+    window.addEventListener('load', function() {
+        // Check if it's a mobile device
+        if (window.innerWidth <= 768) {
+            // Show a message or redirect
+            alert('For the best experience, please view this website on a desktop or laptop.');
+            
+            // Optional: Show a styled message instead of alert
+            // You can uncomment the lines below to show a banner instead
+            /*
+            const mobileWarning = document.createElement('div');
+            mobileWarning.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                background-color: #f5b042;
+                color: #000;
+                text-align: center;
+                padding: 15px;
+                font-weight: bold;
+                z-index: 9999;
+                border-bottom: 3px solid #0f6cbf;
+            `;
+            mobileWarning.innerHTML = '📱 For the best experience, please view this website on a desktop or laptop.';
+            document.body.prepend(mobileWarning);
+            */
+        }
+    });
+
+    // Optional: Check when window resizes
+    window.addEventListener('resize', function() {
+        if (window.innerWidth <= 768) {
+            console.log('Mobile view detected');
+        } else {
+            console.log('Desktop/Laptop view detected');
+        }
+    });
