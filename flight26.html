@@ -2,148 +2,74 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>FLIGHT 26 | AAE</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
-            background-color: #0a1520;
-            color: #e0e0e0;
-            line-height: 1.6;
-        }
-
-        .container {
-            width: 90%;
-            max-width: 1300px;
-            margin: 0 auto;
-        }
-
-        /* color vars */
+        /* Additional specific fixes for FLIGHT 26 page */
         :root {
             --primary-blue: #0f6cbf;
             --accent-gold: #f5b042;
             --dark-bg: #0f1a24;
             --card-bg: #14222e;
             --card-border: #2a3a48;
-            --text-primary: #ffffff;
-            --text-secondary: #cbd5e0;
-            --text-muted: #9aaebf;
-            --shadow-md: 0 10px 25px -5px rgba(0,0,0,0.6);
-            --radius-md: 8px;
-            --radius-lg: 16px;
         }
 
-        /* FLIGHT 26 Hero (original) */
+        /* Flight Hero - Fixed for mobile */
         .flight-hero {
             background: linear-gradient(145deg, #0b1b2b, #051016);
-            padding: 3rem 0 2rem;
+            padding: 6rem 0 3rem;
             border-bottom: 1px solid #1d3342;
+            margin-top: 70px;
         }
+
         .flight-header {
             text-align: center;
         }
+
         .flight-title {
             font-size: 4rem;
             font-weight: 800;
             background: linear-gradient(135deg, #fff, #9bc5e0);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-clip: text;
             letter-spacing: 6px;
+            word-break: break-word;
         }
+
         .flight-subtitle {
             font-size: 1.4rem;
             color: var(--accent-gold);
             margin-bottom: 1.5rem;
         }
-        .flight-date p {
-            display: inline-block;
-            margin: 0.5rem 1.5rem;
-            color: var(--text-secondary);
-        }
-        .flight-date i {
-            color: var(--primary-blue);
-            margin-right: 0.4rem;
-        }
-        .flight-actions {
-            margin: 2.5rem 0 1rem;
-        }
-        .btn-primary, .btn-secondary {
-            display: inline-block;
-            padding: 0.8rem 2rem;
-            border-radius: 40px;
-            font-weight: 600;
-            text-decoration: none;
-            margin: 0.3rem;
-            transition: 0.2s;
-            border: none;
-            cursor: pointer;
-            font-size: 1rem;
-        }
-        .btn-primary {
-            background-color: var(--primary-blue);
-            color: white;
-        }
-        .btn-secondary {
-            background-color: transparent;
-            border: 2px solid var(--primary-blue);
-            color: white;
-        }
-        .btn-primary:hover {
-            background-color: #0d559e;
-        }
-        .btn-secondary:hover {
-            background-color: rgba(15,108,191,0.15);
-        }
-        .btn-large {
-            padding: 0.9rem 2.5rem;
-            font-size: 1.1rem;
-        }
 
-        /* section header */
-        .section-header {
-            text-align: center;
-            margin: 3rem 0 2rem;
-        }
-        .section-header h2 {
-            font-size: 2.5rem;
-            color: white;
-            border-bottom: 3px solid var(--primary-blue);
-            display: inline-block;
-            padding-bottom: 0.3rem;
-            margin-bottom: 1rem;
-        }
-
-        /* flight about (original) */
-        .flight-about {
-            padding: 2rem 0;
-        }
-        .flight-description {
-            max-width: 900px;
-            margin: 0 auto;
-            text-align: center;
-        }
-        .features-grid {
+        .flight-date {
             display: flex;
-            flex-wrap: wrap;
             justify-content: center;
             gap: 2rem;
-            margin-top: 2.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
         }
-        .feature {
-            flex: 1 1 160px;
-            max-width: 200px;
+
+        .flight-date p {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0;
+            color: #cbd5e0;
         }
-        .feature i {
-            font-size: 2.8rem;
+
+        .flight-date i {
             color: var(--primary-blue);
+        }
+
+        .flight-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
         }
 
         /* Workshop Split Section */
@@ -153,33 +79,21 @@
             border-bottom: 1px solid var(--card-border);
             padding: 3rem 0;
         }
-        
+
         .split-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 2rem;
             margin-top: 2rem;
         }
-        
-        @media (max-width: 992px) {
-            .split-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .split-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        
+
         .day-col {
             background-color: var(--dark-bg);
             border: 1px solid var(--card-border);
-            border-radius: var(--radius-lg);
+            border-radius: 16px;
             padding: 1.5rem;
         }
-        
+
         .day-col h3 {
             color: var(--accent-gold);
             text-align: center;
@@ -188,43 +102,40 @@
             border-bottom: 2px solid var(--primary-blue);
             padding-bottom: 0.8rem;
         }
-        
+
         .day-col h3 span {
             font-size: 1rem;
-            color: var(--text-muted);
+            color: #9aaebf;
             display: block;
         }
-        
+
+        /* Table Styles - Fixed for mobile */
         .workshop-table {
             width: 100%;
             border-collapse: collapse;
         }
-        
+
         .workshop-table th {
             text-align: left;
-            color: var(--text-muted);
+            color: #9aaebf;
             font-weight: 600;
             font-size: 0.9rem;
             padding-bottom: 0.8rem;
             border-bottom: 1px solid var(--card-border);
         }
-        
+
         .workshop-table td {
             padding: 0.8rem 0;
             border-bottom: 1px solid rgba(255,255,255,0.05);
-            color: var(--text-secondary);
+            color: #cbd5e0;
         }
-        
+
         .workshop-table td:nth-child(2) {
             font-weight: 600;
             color: #b3e0ff;
             white-space: nowrap;
         }
-        
-        .workshop-table tr:last-child td {
-            border-bottom: none;
-        }
-        
+
         .pdf-link {
             background-color: #1f4357;
             color: white;
@@ -240,128 +151,298 @@
             white-space: nowrap;
             text-decoration: none;
         }
-        
+
         .pdf-link i {
             color: #ffbe5c;
-            font-size: 0.8rem;
         }
-        
+
         .pdf-link:hover {
             background-color: #2e5e7a;
             border-color: var(--accent-gold);
         }
-        
-        /* Competitions Section */
-        .competitions-section {
-            background-color: var(--dark-bg);
-            padding: 3rem 0;
-        }
-        
-        .competitions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-        
-        .competition-card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: var(--radius-lg);
-            padding: 2rem;
-            text-align: center;
-            transition: 0.3s;
-        }
-        
-        .competition-card:hover {
-            border-color: var(--primary-blue);
-            transform: translateY(-5px);
-        }
-        
-        .competition-card h3 {
-            color: #ffda85;
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .competition-details {
-            margin: 1.5rem 0;
-        }
-        
-        .competition-details p {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            margin-bottom: 0.8rem;
-            color: var(--text-secondary);
-        }
-        
-        .competition-details i {
-            color: var(--primary-blue);
-        }
-        
-        .competition-card .pdf-link {
-            margin-top: 1rem;
-            padding: 0.6rem 1.2rem;
-            font-size: 0.9rem;
-        }
-        
-        /* Schedule Section */
+
+        /* Schedule Section - Fixed */
         .schedule-section {
             background-color: #102633;
             padding: 3rem 0;
         }
-        
+
         .schedule-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
             margin: 1rem 0 2rem;
         }
-        
+
         .tab-btn {
             background: transparent;
             border: 2px solid var(--primary-blue);
             color: white;
             padding: 0.5rem 2rem;
-            margin: 0 0.3rem;
             border-radius: 40px;
             font-weight: 600;
             cursor: pointer;
+            transition: 0.2s;
         }
-        
+
         .tab-btn.active {
             background: var(--primary-blue);
         }
-        
-        .schedule-placeholder {
+
+        .schedule-table {
             background: #1b3443;
-            border-radius: var(--radius-lg);
-            padding: 3rem;
-            text-align: center;
+            border-radius: 16px;
+            overflow: hidden;
             border: 1px solid #345a70;
         }
-        
-        .schedule-placeholder i {
-            font-size: 3rem;
-            color: var(--primary-blue);
-            margin-bottom: 1rem;
+
+        .schedule-row {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1.5fr;
+            border-bottom: 1px solid #345a70;
         }
-        
-        .schedule-placeholder h3 {
-            color: white;
-            margin-bottom: 0.5rem;
+
+        .schedule-row:last-child {
+            border-bottom: none;
         }
-        
-        .schedule-placeholder p {
-            color: var(--text-muted);
+
+        .schedule-row.header {
+            background-color: var(--primary-blue);
+            font-weight: 600;
         }
-        
-        /* Footer */
-        .site-footer {
-            background-color: #0b141e;
-            padding: 2rem;
-            text-align: center;
-            border-top: 1px solid #1f3543;
-            color: #8aa5b5;
+
+        .schedule-cell {
+            padding: 1rem;
+            color: #e0e0e0;
+        }
+
+        .schedule-cell:not(:last-child) {
+            border-right: 1px solid #345a70;
+        }
+
+        /* ===== MOBILE RESPONSIVE FIXES ===== */
+        @media screen and (max-width: 768px) {
+            .flight-hero {
+                padding: 5rem 0 2rem;
+                margin-top: 60px;
+            }
+
+            .flight-title {
+                font-size: 2.5rem;
+                letter-spacing: 3px;
+                line-height: 1.2;
+                word-break: break-word;
+                hyphens: auto;
+            }
+
+            .flight-subtitle {
+                font-size: 1.1rem;
+            }
+
+            .flight-date {
+                flex-direction: column;
+                gap: 0.8rem;
+                align-items: center;
+            }
+
+            .flight-date p {
+                font-size: 0.95rem;
+                margin: 0;
+            }
+
+            .flight-actions {
+                flex-direction: column;
+                gap: 0.8rem;
+                width: 100%;
+                max-width: 300px;
+                margin: 0 auto;
+            }
+
+            .flight-actions a {
+                width: 100%;
+                text-align: center;
+                padding: 0.8rem 1rem;
+            }
+
+            /* Split Grid - Stack vertically */
+            .split-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .day-col {
+                padding: 1rem;
+            }
+
+            .day-col h3 {
+                font-size: 1.5rem;
+            }
+
+            .day-col h3 span {
+                font-size: 0.9rem;
+            }
+
+            /* Make tables scrollable horizontally */
+            .workshop-table {
+                display: block;
+                width: 100%;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                white-space: nowrap;
+            }
+
+            .workshop-table table {
+                min-width: 500px;
+            }
+
+            .workshop-table td, 
+            .workshop-table th {
+                padding: 0.8rem 1rem;
+            }
+
+            .workshop-table td:first-child,
+            .workshop-table th:first-child {
+                padding-left: 0;
+            }
+
+            .workshop-table td:last-child,
+            .workshop-table th:last-child {
+                padding-right: 0;
+            }
+
+            /* Schedule tabs */
+            .schedule-tabs {
+                flex-direction: column;
+                gap: 0.8rem;
+                padding: 0 1rem;
+            }
+
+            .tab-btn {
+                width: 100%;
+                padding: 0.8rem;
+            }
+
+            /* Schedule table - stack vertically */
+            .schedule-row {
+                grid-template-columns: 1fr;
+                border-bottom: 1px solid #345a70;
+            }
+
+            .schedule-row.header {
+                display: none; /* Hide header on mobile, show labels instead */
+            }
+
+            .schedule-cell {
+                padding: 0.8rem 1rem;
+                position: relative;
+                border-bottom: 1px solid #345a70;
+            }
+
+            .schedule-cell:last-child {
+                border-bottom: none;
+            }
+
+            .schedule-cell:not(:last-child) {
+                border-right: none;
+            }
+
+            /* Add labels to schedule cells */
+            .schedule-cell::before {
+                content: attr(data-label);
+                display: inline-block;
+                font-weight: 600;
+                color: #9aaebf;
+                width: 80px;
+                margin-right: 1rem;
+            }
+
+            .schedule-row:not(.header) .schedule-cell {
+                display: flex;
+                align-items: flex-start;
+            }
+
+            /* Features grid */
+            .features-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+
+            .feature {
+                padding: 1rem;
+            }
+
+            .feature i {
+                font-size: 2rem;
+            }
+
+            .feature h4 {
+                font-size: 1rem;
+            }
+
+            .feature p {
+                font-size: 0.85rem;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .flight-title {
+                font-size: 2rem;
+                letter-spacing: 2px;
+            }
+
+            .flight-subtitle {
+                font-size: 1rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .day-col h3 {
+                font-size: 1.3rem;
+            }
+
+            .schedule-cell::before {
+                width: 70px;
+                font-size: 0.9rem;
+            }
+
+            .schedule-cell {
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Small phones */
+        @media screen and (max-width: 360px) {
+            .flight-title {
+                font-size: 1.8rem;
+            }
+
+            .btn-primary, 
+            .btn-secondary {
+                padding: 0.7rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Landscape mode */
+        @media screen and (max-width: 850px) and (orientation: landscape) {
+            .flight-hero {
+                padding: 4rem 0 2rem;
+            }
+
+            .flight-date {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+        }
+
+        /* Fix for very large screens */
+        @media screen and (min-width: 1600px) {
+            .container {
+                max-width: 1400px;
+            }
         }
     </style>
 </head>
@@ -376,13 +457,13 @@
                 <p class="flight-subtitle">National Level Technical Event</p>
                 <div class="flight-date">
                     <p><i class="far fa-calendar"></i> 21–22 March 2026</p>
-                    <p><i class="far fa-clock"></i> Starts on March 21, 9:00 AM</p>
-                    <p><i class="fas fa-map-marker-alt"></i> MIT Campus, Anna University, Chennai</p>
+                    <p><i class="far fa-clock"></i> Starts 9:00 AM</p>
+                    <p><i class="fas fa-map-marker-alt"></i> MIT Campus, Chennai</p>
                 </div>
                 <div class="flight-actions">
-                    <a href="#" class="btn-primary btn-large">Register Now</a>
-                    <a href="#schedule" class="btn-secondary btn-large">View Schedule</a>
-                    <a href="#workshops" class="btn-secondary btn-large">Workshop Details</a>
+                    <a href="#" class="btn-primary">Register Now</a>
+                    <a href="#schedule" class="btn-secondary">View Schedule</a>
+                    <a href="#workshops" class="btn-secondary">Workshops</a>
                 </div>
             </div>
         </div>
@@ -401,166 +482,172 @@
                     <div class="feature">
                         <i class="fas fa-microphone"></i>
                         <h4>Keynote Speeches</h4>
-                        <p>Insights from industry leaders and researchers</p>
+                        <p>Insights from industry leaders</p>
                     </div>
                     <div class="feature">
                         <i class="fas fa-trophy"></i>
-                        <h4>Technical Competitions</h4>
-                        <p>Multiple events to test engineering skills</p>
+                        <h4>Competitions</h4>
+                        <p>Test engineering skills</p>
                     </div>
                     <div class="feature">
                         <i class="fas fa-chalkboard-teacher"></i>
                         <h4>Workshops</h4>
-                        <p>Hands-on sessions on cutting-edge technologies</p>
+                        <p>Hands-on sessions</p>
                     </div>
                     <div class="feature">
                         <i class="fas fa-network-wired"></i>
                         <h4>Networking</h4>
-                        <p>Connect with peers and industry professionals</p>
+                        <p>Connect with professionals</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Workshop Split Up - Day 1, Day 2 & Both Days -->
+    <!-- Workshop Split Up -->
     <section class="workshop-split-section" id="workshops">
         <div class="container">
             <div class="section-header">
-                <h2>Workshop Split Up</h2>
+                <h2>Workshops</h2>
                 <p>Day-wise workshops with registration fee</p>
             </div>
             
             <div class="split-grid">
-                <!-- DAY 1 Workshops -->
+                <!-- DAY 1 -->
                 <div class="day-col">
-                    <h3>DAY 1 <span>(March 21)</span></h3>
-                    <table class="workshop-table">
-                        <tr>
-                            <th>Workshop</th>
-                            <th>Fee</th>
-                            <th>Details</th>
-                        </tr>
-                        <tr>
-                            <td>Rocket Building</td>
-                            <td>₹699</td>
-                            <td><a href="AdmitCard_TECH941820 (1).pdf" class="pdf-link" target="_blank"><i class="fas fa-file-pdf"></i> Click for more details</a></td>
-                        </tr>
-                        <tr>
-                            <td>Basics of Space Technology</td>
-                            <td>₹299</td>
-                            <td><a href="#" class="pdf-link" onclick="window.open('pdfs/space-tech.pdf', '_blank'); return false;"><i class="fas fa-file-pdf"></i> Click for more details</a></td>
-                        </tr>
-                        <tr>
-                            <td>CFD Workshop</td>
-                            <td>₹399</td>
-                            <td><a href="#" class="pdf-link" onclick="window.open('pdfs/cfd.pdf', '_blank'); return false;"><i class="fas fa-file-pdf"></i> Click for more details</a></td>
-                        </tr>
-                        <tr>
-                            <td>Combustion Workshop</td>
-                            <td>₹299</td>
-                            <td><a href="#" class="pdf-link" onclick="window.open('pdfs/combustion.pdf', '_blank'); return false;"><i class="fas fa-file-pdf"></i> Click for more details</a></td>
-                        </tr>
-                        <tr>
-                            <td>Air Crash Investigation</td>
-                            <td>₹99</td>
-                            <td><a href="#" class="pdf-link" onclick="window.open('pdfs/air-crash.pdf', '_blank'); return false;"><i class="fas fa-file-pdf"></i> Click for more details</a></td>
-                        </tr>
-                        <tr>
-                            <td>Avionics Workshop</td>
-                            <td>₹299</td>
-                            <td><a href="#" class="pdf-link" onclick="window.open('pdfs/avionics.pdf', '_blank'); return false;"><i class="fas fa-file-pdf"></i> Click for more details</a></td>
-                        </tr>
-                        <tr>
-                            <td>Jet Handling Workshop</td>
-                            <td>₹299</td>
-                            <td><a href="#" class="pdf-link" onclick="window.open('pdfs/jet-handling.pdf', '_blank'); return false;"><i class="fas fa-file-pdf"></i> Click for more details</a></td>
-                        </tr>
-                        <tr>
-                            <td>IC Engine Workshop</td>
-                            <td>₹299</td>
-                            <td><a href="#" class="pdf-link" onclick="window.open('pdfs/ic-engine.pdf', '_blank'); return false;"><i class="fas fa-file-pdf"></i> Click for more details</a></td>
-                        </tr>
-                        <tr>
-                            <td>Paper Presentation</td>
-                            <td>₹249</td>
-                            <td><a href="#" class="pdf-link" onclick="window.open('pdfs/paper-presentation.pdf', '_blank'); return false;"><i class="fas fa-file-pdf"></i> Click for more details</a></td>
-                        </tr>
-                    </table>
+                    <h3>DAY 1 <span>March 21</span></h3>
+                    <div class="workshop-table">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <th style="text-align: left;">Workshop</th>
+                                <th style="text-align: left;">Fee</th>
+                                <th style="text-align: left;">Details</th>
+                            </tr>
+                            <tr>
+                                <td>Rocket Building</td>
+                                <td>₹699</td>
+                                <td><a href="#" class="pdf-link"><i class="fas fa-file-pdf"></i> Details</a></td>
+                            </tr>
+                            <tr>
+                                <td>Space Technology</td>
+                                <td>₹299</td>
+                                <td><a href="#" class="pdf-link"><i class="fas fa-file-pdf"></i> Details</a></td>
+                            </tr>
+                            <tr>
+                                <td>CFD Workshop</td>
+                                <td>₹399</td>
+                                <td><a href="#" class="pdf-link"><i class="fas fa-file-pdf"></i> Details</a></td>
+                            </tr>
+                            <tr>
+                                <td>Combustion</td>
+                                <td>₹299</td>
+                                <td><a href="#" class="pdf-link"><i class="fas fa-file-pdf"></i> Details</a></td>
+                            </tr>
+                            <tr>
+                                <td>Air Crash Investigation</td>
+                                <td>₹99</td>
+                                <td><a href="#" class="pdf-link"><i class="fas fa-file-pdf"></i> Details</a></td>
+                            </tr>
+                            <tr>
+                                <td>Avionics</td>
+                                <td>₹299</td>
+                                <td><a href="#" class="pdf-link"><i class="fas fa-file-pdf"></i> Details</a></td>
+                            </tr>
+                            <tr>
+                                <td>Jet Handling</td>
+                                <td>₹299</td>
+                                <td><a href="#" class="pdf-link"><i class="fas fa-file-pdf"></i> Details</a></td>
+                            </tr>
+                            <tr>
+                                <td>IC Engine</td>
+                                <td>₹299</td>
+                                <td><a href="#" class="pdf-link"><i class="fas fa-file-pdf"></i> Details</a></td>
+                            </tr>
+                            <tr>
+                                <td>Paper Presentation</td>
+                                <td>₹249</td>
+                                <td><a href="#" class="pdf-link"><i class="fas fa-file-pdf"></i> Details</a></td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
                 
-                <!-- DAY 2 Workshops -->
+                <!-- DAY 2 -->
                 <div class="day-col">
-                    <h3>DAY 2 <span>(March 22)</span></h3>
-                    <table class="workshop-table">
-                        <tr>
-                            <th>Workshop</th>
-                            <th>Fee</th>
-                            <th>Details</th>
-                        </tr>
-                        <tr>
-                            <td>Basics of Flight</td>
-                            <td>₹299</td>
-                            <td><a href="#" class="pdf-link" onclick="window.open('pdfs/basics-flight.pdf', '_blank'); return false;"><i class="fas fa-file-pdf"></i> Click for more details</a></td>
-                        </tr>
-                        <tr>
-                            <td>Drone Workshop</td>
-                            <td>₹649</td>
-                            <td><a href="#" class="pdf-link" onclick="window.open('pdfs/drone.pdf', '_blank'); return false;"><i class="fas fa-file-pdf"></i> Click for more details</a></td>
-                        </tr>
-                        <tr>
-                            <td>3D Printing Workshop</td>
-                            <td>₹299</td>
-                            <td><a href="#" class="pdf-link" onclick="window.open('pdfs/3d-printing.pdf', '_blank'); return false;"><i class="fas fa-file-pdf"></i> Click for more details</a></td>
-                        </tr>
-                        <tr>
-                            <td>CAD Competition</td>
-                            <td>₹399</td>
-                            <td><a href="#" class="pdf-link" onclick="window.open('pdfs/cad-competition.pdf', '_blank'); return false;"><i class="fas fa-file-pdf"></i> Click for more details</a></td>
-                        </tr>
-                        <tr>
-                            <td>MATLAB Bootcamp</td>
-                            <td>₹2299</td>
-                            <td><a href="#" class="pdf-link" onclick="window.open('pdfs/matlab.pdf', '_blank'); return false;"><i class="fas fa-file-pdf"></i> Click for more details</a></td>
-                        </tr>
-                        <tr>
-                            <td>RC Plane Racing Competition</td>
-                            <td>₹1750</td>
-                            <td><a href="#" class="pdf-link" onclick="window.open('pdfs/rc-racing.pdf', '_blank'); return false;"><i class="fas fa-file-pdf"></i> Click for more details</a></td>
-                        </tr>
-                        <tr>
-                            <td>Drone Racing</td>
-                            <td>₹1499</td>
-                            <td><a href="#" class="pdf-link" onclick="window.open('pdfs/drone-racing.pdf', '_blank'); return false;"><i class="fas fa-file-pdf"></i> Click for more details</a></td>
-                        </tr>
-                    </table>
+                    <h3>DAY 2 <span>March 22</span></h3>
+                    <div class="workshop-table">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <th style="text-align: left;">Workshop</th>
+                                <th style="text-align: left;">Fee</th>
+                                <th style="text-align: left;">Details</th>
+                            </tr>
+                            <tr>
+                                <td>Basics of Flight</td>
+                                <td>₹299</td>
+                                <td><a href="#" class="pdf-link"><i class="fas fa-file-pdf"></i> Details</a></td>
+                            </tr>
+                            <tr>
+                                <td>Drone Workshop</td>
+                                <td>₹649</td>
+                                <td><a href="#" class="pdf-link"><i class="fas fa-file-pdf"></i> Details</a></td>
+                            </tr>
+                            <tr>
+                                <td>3D Printing</td>
+                                <td>₹299</td>
+                                <td><a href="#" class="pdf-link"><i class="fas fa-file-pdf"></i> Details</a></td>
+                            </tr>
+                            <tr>
+                                <td>CAD Competition</td>
+                                <td>₹399</td>
+                                <td><a href="#" class="pdf-link"><i class="fas fa-file-pdf"></i> Details</a></td>
+                            </tr>
+                            <tr>
+                                <td>MATLAB Bootcamp</td>
+                                <td>₹2299</td>
+                                <td><a href="#" class="pdf-link"><i class="fas fa-file-pdf"></i> Details</a></td>
+                            </tr>
+                            <tr>
+                                <td>RC Plane Racing</td>
+                                <td>₹1750</td>
+                                <td><a href="#" class="pdf-link"><i class="fas fa-file-pdf"></i> Details</a></td>
+                            </tr>
+                            <tr>
+                                <td>Drone Racing</td>
+                                <td>₹1499</td>
+                                <td><a href="#" class="pdf-link"><i class="fas fa-file-pdf"></i> Details</a></td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
                 
-                <!-- BOTH DAYS Workshops -->
+                <!-- BOTH DAYS -->
                 <div class="day-col">
-                    <h3>BOTH DAYS <span>(March 21-22)</span></h3>
-                    <table class="workshop-table">
-                        <tr>
-                            <th>Workshop</th>
-                            <th>Fee</th>
-                            <th>Details</th>
-                        </tr>
-                        <tr>
-                            <td>Composites Workshop</td>
-                            <td>₹499</td>
-                            <td><a href="#" class="pdf-link" onclick="window.open('pdfs/composites.pdf', '_blank'); return false;"><i class="fas fa-file-pdf"></i> Click for more details</a></td>
-                        </tr>
-                        <tr>
-                            <td>RC Plane Building</td>
-                            <td>₹2749</td>
-                            <td><a href="#" class="pdf-link" onclick="window.open('pdfs/rc-building.pdf', '_blank'); return false;"><i class="fas fa-file-pdf"></i> Click for more details</a></td>
-                        </tr>
-                        <tr>
-                            <td>Simulator Experience</td>
-                            <td>₹149</td>
-                            <td><a href="#" class="pdf-link" onclick="window.open('pdfs/simulator.pdf', '_blank'); return false;"><i class="fas fa-file-pdf"></i> Click for more details</a></td>
-                        </tr>
-                    </table>
+                    <h3>BOTH DAYS <span>March 21-22</span></h3>
+                    <div class="workshop-table">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <th style="text-align: left;">Workshop</th>
+                                <th style="text-align: left;">Fee</th>
+                                <th style="text-align: left;">Details</th>
+                            </tr>
+                            <tr>
+                                <td>Composites</td>
+                                <td>₹499</td>
+                                <td><a href="#" class="pdf-link"><i class="fas fa-file-pdf"></i> Details</a></td>
+                            </tr>
+                            <tr>
+                                <td>RC Plane Building</td>
+                                <td>₹2749</td>
+                                <td><a href="#" class="pdf-link"><i class="fas fa-file-pdf"></i> Details</a></td>
+                            </tr>
+                            <tr>
+                                <td>Simulator Experience</td>
+                                <td>₹149</td>
+                                <td><a href="#" class="pdf-link"><i class="fas fa-file-pdf"></i> Details</a></td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -578,11 +665,41 @@
             </div>
             
             <div class="schedule-table" id="scheduleTable">
-                <!-- Schedule will be loaded dynamically -->
-                <div class="schedule-placeholder">
-                    <i class="fas fa-calendar-alt"></i>
-                    <h3>Detailed schedule available soon</h3>
-                    <p>All workshops run from 9:30 AM to 4:30 PM</p>
+                <!-- Day 1 Schedule -->
+                <div class="schedule-row header">
+                    <div class="schedule-cell">Time</div>
+                    <div class="schedule-cell">Event</div>
+                    <div class="schedule-cell">Venue</div>
+                </div>
+                <div class="schedule-row">
+                    <div class="schedule-cell" data-label="Time">9:00 AM - 10:00 AM</div>
+                    <div class="schedule-cell" data-label="Event">Registration & Inauguration</div>
+                    <div class="schedule-cell" data-label="Venue">Main Auditorium</div>
+                </div>
+                <div class="schedule-row">
+                    <div class="schedule-cell" data-label="Time">10:00 AM - 11:00 AM</div>
+                    <div class="schedule-cell" data-label="Event">Keynote Address: Future of Aerospace</div>
+                    <div class="schedule-cell" data-label="Venue">Main Auditorium</div>
+                </div>
+                <div class="schedule-row">
+                    <div class="schedule-cell" data-label="Time">11:00 AM - 1:00 PM</div>
+                    <div class="schedule-cell" data-label="Event">Paper Presentation Competition</div>
+                    <div class="schedule-cell" data-label="Venue">Seminar Halls 1 & 2</div>
+                </div>
+                <div class="schedule-row">
+                    <div class="schedule-cell" data-label="Time">1:00 PM - 2:00 PM</div>
+                    <div class="schedule-cell" data-label="Event">Lunch Break</div>
+                    <div class="schedule-cell" data-label="Venue">Food Court</div>
+                </div>
+                <div class="schedule-row">
+                    <div class="schedule-cell" data-label="Time">2:00 PM - 5:00 PM</div>
+                    <div class="schedule-cell" data-label="Event">Aeromodelling Competition</div>
+                    <div class="schedule-cell" data-label="Venue">Aerospace Workshop</div>
+                </div>
+                <div class="schedule-row">
+                    <div class="schedule-cell" data-label="Time">5:00 PM - 6:00 PM</div>
+                    <div class="schedule-cell" data-label="Event">Quiz Prelims</div>
+                    <div class="schedule-cell" data-label="Venue">Lecture Hall 5</div>
                 </div>
             </div>
         </div>
@@ -595,44 +712,97 @@
         // Tab functionality for schedule
         document.addEventListener('DOMContentLoaded', function() {
             const tabBtns = document.querySelectorAll('.tab-btn');
-            const scheduleDiv = document.getElementById('scheduleTable');
+            const scheduleTable = document.getElementById('scheduleTable');
+            
+            // Day 2 schedule data
+            const day2Schedule = `
+                <div class="schedule-row header">
+                    <div class="schedule-cell">Time</div>
+                    <div class="schedule-cell">Event</div>
+                    <div class="schedule-cell">Venue</div>
+                </div>
+                <div class="schedule-row">
+                    <div class="schedule-cell" data-label="Time">9:00 AM - 11:00 AM</div>
+                    <div class="schedule-cell" data-label="Event">CAD Modelling Competition</div>
+                    <div class="schedule-cell" data-label="Venue">Computer Lab 3</div>
+                </div>
+                <div class="schedule-row">
+                    <div class="schedule-cell" data-label="Time">11:00 AM - 1:00 PM</div>
+                    <div class="schedule-cell" data-label="Event">Workshop: UAV Design</div>
+                    <div class="schedule-cell" data-label="Venue">Aerospace Department</div>
+                </div>
+                <div class="schedule-row">
+                    <div class="schedule-cell" data-label="Time">1:00 PM - 2:00 PM</div>
+                    <div class="schedule-cell" data-label="Event">Lunch Break</div>
+                    <div class="schedule-cell" data-label="Venue">Food Court</div>
+                </div>
+                <div class="schedule-row">
+                    <div class="schedule-cell" data-label="Time">2:00 PM - 4:00 PM</div>
+                    <div class="schedule-cell" data-label="Event">Quiz Finals</div>
+                    <div class="schedule-cell" data-label="Venue">Main Auditorium</div>
+                </div>
+                <div class="schedule-row">
+                    <div class="schedule-cell" data-label="Time">4:00 PM - 5:30 PM</div>
+                    <div class="schedule-cell" data-label="Event">Panel Discussion: Careers in Aerospace</div>
+                    <div class="schedule-cell" data-label="Venue">Main Auditorium</div>
+                </div>
+                <div class="schedule-row">
+                    <div class="schedule-cell" data-label="Time">5:30 PM - 6:30 PM</div>
+                    <div class="schedule-cell" data-label="Event">Prize Distribution & Closing Ceremony</div>
+                    <div class="schedule-cell" data-label="Venue">Main Auditorium</div>
+                </div>
+            `;
             
             tabBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
                     tabBtns.forEach(b => b.classList.remove('active'));
                     this.classList.add('active');
                     
-                    const day = this.dataset.day;
-                    if (day === 'day1') {
-                        scheduleDiv.innerHTML = `
-                            <div class="schedule-placeholder">
-                                <i class="fas fa-calendar-alt"></i>
-                                <h3>Day 1 Schedule (March 21)</h3>
-                                <p>9:30 AM - 4:30 PM: All workshops and competitions</p>
-                                <p style="margin-top: 1rem; color: #b0d4ec;">Workshops: Rocket Building, CFD, Avionics, Paper Presentation, Composites</p>
-                                <p>Competitions: Paper Presentation, Quiz</p>
-                            </div>
-                        `;
+                    if (this.dataset.day === 'day2') {
+                        scheduleTable.innerHTML = day2Schedule;
                     } else {
-                        scheduleDiv.innerHTML = `
-                            <div class="schedule-placeholder">
-                                <i class="fas fa-calendar-alt"></i>
-                                <h3>Day 2 Schedule (March 22)</h3>
-                                <p>9:30 AM - 4:30 PM: All workshops and competitions</p>
-                                <p style="margin-top: 1rem; color: #b0d4ec;">Workshops: Drone, 3D Printing, MATLAB, RC Racing</p>
-                                <p>Competitions: CAD Modelling, RC Plane Racing, Drone Racing</p>
+                        // Reset to day 1 schedule
+                        scheduleTable.innerHTML = `
+                            <div class="schedule-row header">
+                                <div class="schedule-cell">Time</div>
+                                <div class="schedule-cell">Event</div>
+                                <div class="schedule-cell">Venue</div>
+                            </div>
+                            <div class="schedule-row">
+                                <div class="schedule-cell" data-label="Time">9:00 AM - 10:00 AM</div>
+                                <div class="schedule-cell" data-label="Event">Registration & Inauguration</div>
+                                <div class="schedule-cell" data-label="Venue">Main Auditorium</div>
+                            </div>
+                            <div class="schedule-row">
+                                <div class="schedule-cell" data-label="Time">10:00 AM - 11:00 AM</div>
+                                <div class="schedule-cell" data-label="Event">Keynote Address: Future of Aerospace</div>
+                                <div class="schedule-cell" data-label="Venue">Main Auditorium</div>
+                            </div>
+                            <div class="schedule-row">
+                                <div class="schedule-cell" data-label="Time">11:00 AM - 1:00 PM</div>
+                                <div class="schedule-cell" data-label="Event">Paper Presentation Competition</div>
+                                <div class="schedule-cell" data-label="Venue">Seminar Halls 1 & 2</div>
+                            </div>
+                            <div class="schedule-row">
+                                <div class="schedule-cell" data-label="Time">1:00 PM - 2:00 PM</div>
+                                <div class="schedule-cell" data-label="Event">Lunch Break</div>
+                                <div class="schedule-cell" data-label="Venue">Food Court</div>
+                            </div>
+                            <div class="schedule-row">
+                                <div class="schedule-cell" data-label="Time">2:00 PM - 5:00 PM</div>
+                                <div class="schedule-cell" data-label="Event">Aeromodelling Competition</div>
+                                <div class="schedule-cell" data-label="Venue">Aerospace Workshop</div>
+                            </div>
+                            <div class="schedule-row">
+                                <div class="schedule-cell" data-label="Time">5:00 PM - 6:00 PM</div>
+                                <div class="schedule-cell" data-label="Event">Quiz Prelims</div>
+                                <div class="schedule-cell" data-label="Venue">Lecture Hall 5</div>
                             </div>
                         `;
                     }
                 });
             });
         });
-
-        // Function to open PDFs (alternative method if needed)
-        function openPDF(pdfName) {
-            window.open('pdfs/' + pdfName, '_blank');
-            return false;
-        }
     </script>
 </body>
 </html>
