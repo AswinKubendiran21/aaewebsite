@@ -1334,48 +1334,61 @@ function initContactForm() {
         });
     }
 }
+// Add to your script.js, inside initNavigation() function
 
-// ===== Load Home Page Events =====
-function loadHomeEvents() {
-    // This function is called from DOMContentLoaded for home page
-    // Events timeline is already initialized by initEventsTimeline()
+function initNavigation() {
+    const menuToggle = document.getElementById('menuToggle');
+    const navMenu = document.getElementById('navMenu');
+    
+    if (menuToggle && navMenu) {
+        menuToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            navMenu.classList.toggle('active');
+            document.body.classList.toggle('menu-open'); // Prevent scrolling when menu is open
+            
+            // Update menu icon
+            if (navMenu.classList.contains('active')) {
+                menuToggle.innerHTML = '<i class="fas fa-times"></i>';
+            } else {
+                menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        });
+        
+        // Close menu when clicking on a link
+        const navLinks = document.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                navMenu.classList.remove('active');
+                document.body.classList.remove('menu-open');
+                menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+            });
+        });
+        
+        // Swipe to close menu on mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+        
+        navMenu.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, false);
+        
+        navMenu.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            if (touchStartX - touchEndX > 50) { // Swipe left to close
+                navMenu.classList.remove('active');
+                document.body.classList.remove('menu-open');
+                menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        }, false);
+    }
+    
+    // Add CSS to prevent scrolling when menu is open
+    const style = document.createElement('style');
+    style.textContent = `
+        body.menu-open {
+            overflow: hidden;
+        }
+    `;
+    document.head.appendChild(style);
 }
 
-    // Check device type on website load
-    window.addEventListener('load', function() {
-        // Check if it's a mobile device
-        if (window.innerWidth <= 768) {
-            // Show a message or redirect
-            alert('For the best experience, please view this website on a desktop or laptop.');
-            
-            // Optional: Show a styled message instead of alert
-            // You can uncomment the lines below to show a banner instead
-            /*
-            const mobileWarning = document.createElement('div');
-            mobileWarning.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                background-color: #f5b042;
-                color: #000;
-                text-align: center;
-                padding: 15px;
-                font-weight: bold;
-                z-index: 9999;
-                border-bottom: 3px solid #0f6cbf;
-            `;
-            mobileWarning.innerHTML = '📱 For the best experience, please view this website on a desktop or laptop.';
-            document.body.prepend(mobileWarning);
-            */
-        }
-    });
-
-    // Optional: Check when window resizes
-    window.addEventListener('resize', function() {
-        if (window.innerWidth <= 768) {
-            console.log('Mobile view detected');
-        } else {
-            console.log('Desktop/Laptop view detected');
-        }
-    });
