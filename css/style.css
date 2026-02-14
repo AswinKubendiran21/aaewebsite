@@ -933,7 +933,6 @@ a:hover {
     align-items: center;
 }
 
-.schedule-cell:not(:last-child) { border-right: 1px solid var(--card-border); }
 
 /* ===== 11. ABOUT PAGE STYLES ===== */
 .about-content {
@@ -1829,13 +1828,16 @@ a:hover {
     .footer-grid { grid-template-columns: 1fr; }
     
     /* Tables */
-    .workshop-table {
-        display: block;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-    
-    .workshop-table table { min-width: 500px; }
+    /* Tables */
+.workshop-table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.workshop-table table { 
+    min-width: 100%; /* Changed from 500px to 100% */
+}
     
     /* Teams */
     .teams-filter {
