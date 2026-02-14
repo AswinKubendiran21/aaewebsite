@@ -1334,61 +1334,6 @@ function initContactForm() {
         });
     }
 }
-// Add to your script.js, inside initNavigation() function
 
-function initNavigation() {
-    const menuToggle = document.getElementById('menuToggle');
-    const navMenu = document.getElementById('navMenu');
-    
-    if (menuToggle && navMenu) {
-        menuToggle.addEventListener('click', function(e) {
-            e.stopPropagation();
-            navMenu.classList.toggle('active');
-            document.body.classList.toggle('menu-open'); // Prevent scrolling when menu is open
-            
-            // Update menu icon
-            if (navMenu.classList.contains('active')) {
-                menuToggle.innerHTML = '<i class="fas fa-times"></i>';
-            } else {
-                menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
-            }
-        });
-        
-        // Close menu when clicking on a link
-        const navLinks = document.querySelectorAll('.nav-link');
-        navLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                navMenu.classList.remove('active');
-                document.body.classList.remove('menu-open');
-                menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
-            });
-        });
-        
-        // Swipe to close menu on mobile
-        let touchStartX = 0;
-        let touchEndX = 0;
-        
-        navMenu.addEventListener('touchstart', (e) => {
-            touchStartX = e.changedTouches[0].screenX;
-        }, false);
-        
-        navMenu.addEventListener('touchend', (e) => {
-            touchEndX = e.changedTouches[0].screenX;
-            if (touchStartX - touchEndX > 50) { // Swipe left to close
-                navMenu.classList.remove('active');
-                document.body.classList.remove('menu-open');
-                menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
-            }
-        }, false);
-    }
-    
-    // Add CSS to prevent scrolling when menu is open
-    const style = document.createElement('style');
-    style.textContent = `
-        body.menu-open {
-            overflow: hidden;
-        }
-    `;
-    document.head.appendChild(style);
-}
 
+    
